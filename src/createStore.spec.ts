@@ -6,6 +6,10 @@ require("babel-polyfill");
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/empty";
+import "rxjs/add/operator/first";
+import "rxjs/add/operator/take";
+import "rxjs/add/operator/toArray";
+import "rxjs/add/operator/toPromise";
 
 import {
   Store, Action, Reducer, StateUpdate, StoreActionsMap,
@@ -67,10 +71,54 @@ describe("createStore", () => {
       expect(typeof createStore).toBe("function"));
   }); // describe Sanity checks
 
-  describe("Given a simple store", () => {
-    const reducer = jest.fn((s, a) => s);
-    const store = createStore(reducer, {});
-    it("it should not be null",
-      () => expect(store).not.toBeFalsy());
+  describe("Given a simple reducer and initialState", () => {
+    describe("When a store is created", () => {
+      const reducer = jest.fn((s, a) => s);
+      const state = { title: "hello" };
+      const store = createStore(reducer, state);
+      const statePromise = store.state$.take(1).toArray().toPromise() as PromiseLike<{ title: string }>;
+      it("it should not be null",
+        () => expect(store).not.toBeFalsy());
+      it("reducer should not be called yet",
+        () => expect(reducer).not.toBeCalled());
+      it("it's action$ should be defined",
+        () => expect(typeof store.action$).toBe("object"));
+      it("it's state$ should be defined",
+        () => expect(typeof store.state$).toBe("object"));
+      it("it's update$ should be defined",
+        () => expect(typeof store.update$).toBe("object"));
+      it("it's getState should be a function",
+        () => expect(typeof store.getState).toBe("function"));
+      it("it's getState should return initial state",
+        () => expect(store.getState()).toEqual(state));
+      it("it's dispatch should be a function",
+        () => expect(typeof store.dispatch).toBe("function"));
+      it("is's state$ should have emitted just the initial state",
+        () => statePromise.then(states => expect(states).toEqual([state])));
+    }); // describe When a store is created
+
+    describe("When an action is dispatched in the store", () => {
+      const reducer = jest.fn((s, a) => ({ title: s.title + a.payload }));
+      const state = { title: "hello" };
+      const store = createStore(reducer, state);
+      const action = { type: "CONCAT", payload: " world" };
+      const statePromise = store.state$.take(2).toArray().toPromise() as PromiseLike<{ title: string }>;
+      const actionPromise = store.action$.take(1).toArray().toPromise() as PromiseLike<Action>;
+      const updatePromise = store.update$.take(1).toArray().toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
+      store.dispatch(action);
+      it("reducer should have been called with action",
+        () => expect(reducer).toBeCalledWith(state, action));
+      it("is's action$ should have emitted the action",
+        () => actionPromise.then(actions => expect(actions).toEqual([action])));
+      it("is's state$ should have emitted the initial state and the new one",
+        () => statePromise.then(states => expect(states).toEqual([
+          state,
+          { title: "hello world" },
+        ])));
+      it("is's update$ should have emitted the state update",
+        () => updatePromise.then(updates => expect(updates).toEqual([{
+          action, state: { title: "hello world" }, previousState: state,
+        }])));
+    }); // describe When an action is dispatched in the store
   }); // describe Given a simple store
 }); // describe createStore
