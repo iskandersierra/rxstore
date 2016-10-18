@@ -1,6 +1,6 @@
 {
   "name": "rxstore",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Redux-like store implemented with RxJS",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
@@ -61,7 +61,9 @@
   },
   "dependencies": {
     "@types/object-assign": "^4.0.29",
-    "object-assign": "^4.1.0",
+    "object-assign": "^4.1.0"
+  },
+  "peerDependencies": {
     "rxjs": "^5.0.0-rc.1"
   },
   "jest": {
