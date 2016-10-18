@@ -71,7 +71,7 @@ describe("createStore", () => {
       expect(typeof createStore).toBe("function"));
   }); // describe Sanity checks
 
-  describe("Given a simple reducer and initialState", () => {
+  describe("Given a reducer and initialState", () => {
     describe("When a store is created", () => {
       const reducer = jest.fn((s, a) => s);
       const state = { title: "hello" };
@@ -119,6 +119,19 @@ describe("createStore", () => {
         () => updatePromise.then(updates => expect(updates).toEqual([{
           action, state: { title: "hello world" }, previousState: state,
         }])));
+    }); // describe When an action is dispatched in the store
+
+    describe("When an action is dispatched in the store through an extension", () => {
+      const reducer = jest.fn((s, a) => ({ title: s.title + a.payload }));
+      const state = { title: "hello" };
+      const store = createStore(reducer, state, createStoreExtensions({
+        concat: (str: string) => ({ type: "CONCAT", payload: str }),
+      }));
+      const action = { type: "CONCAT", payload: " world" };
+      (store as any).concat(" world");
+      store.dispatch(action);
+      it("reducer should have been called with action",
+        () => expect(reducer).toBeCalledWith(state, action));
     }); // describe When an action is dispatched in the store
   }); // describe Given a simple store
 }); // describe createStore
