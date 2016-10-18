@@ -164,11 +164,11 @@ var webpack_opts = {
 }
 
 var create_browser_version = function (inputJs) {
-	let outputName = inputJs.replace(/\.[^/.]+$/, "");
+	var outputName = inputJs.replace(/\.[^/.]+$/, "");
 	outputName = `${outputName}.browser.js`;
 	console.log("Creating browser version ...");
 
-	let b = browserify(inputJs, {
+	var b = browserify(inputJs, {
 		standalone: bundle_opts.name,
 	});
 

@@ -1,6 +1,14 @@
 {
 	"extends": "tslint:recommended",
 	"rules": {
-		"use-strict": true
+		"use-strict": [
+			true,
+			"check-module"
+		],
+		"interface-name": [
+			false,
+			"always-prefix"
+		],
+		"no-unused-variable": false
 	}
 }
