@@ -31,12 +31,17 @@ export const createStoreExtensions =
       return result;
     };
 
+export interface CreateStoreOptions<TState, TStore extends Store<TState>> {
+  extendWith?: (store: Store<TState>) => Object;
+}
+
 export const createStore =
   <TState, TStore extends Store<TState>>(
     reducer: Reducer<TState>,
     initialState: TState,
-    extendWith?: (store: Store<TState>) => Object
+    options?: CreateStoreOptions<TState, TStore>
   ): TStore => {
+    const { extendWith = undefined } = options || {};
     const stateSubject$ = new BehaviorSubject<TState>(initialState);
     const actionSubject$ = new Subject<Action>();
     const updateSubject$ = new Subject<StateUpdate<TState>>();

@@ -8,8 +8,8 @@ var dts = require('dts-bundle');
 var deleteEmpty = require('delete-empty');
 
 /* helper function to get into build directory */
-var libPath = function(name) {
-	if ( undefined === name ) {
+var libPath = function (name) {
+	if (undefined === name) {
 		return 'dist';
 	}
 
@@ -17,40 +17,40 @@ var libPath = function(name) {
 }
 
 /* helper to clean leftovers */
-var outputCleanup = function(dir, initial) {
-	if (false == fs.existsSync(libPath())){
+var outputCleanup = function (dir, initial) {
+	if (false == fs.existsSync(libPath())) {
 		return;
 	}
 
-	if ( true == initial ) {
+	if (true == initial) {
 		console.log("Build leftover found, cleans it up.");
 	}
 
 	var list = fs.readdirSync(dir);
-	for(var i = 0; i < list.length; i++) {
+	for (var i = 0; i < list.length; i++) {
 		var filename = path.join(dir, list[i]);
 		var stat = fs.statSync(filename);
 
-		if(filename == "." || filename == "..") {
+		if (filename == "." || filename == "..") {
 			// pass these files
-			} else if(stat.isDirectory()) {
-				// outputCleanup recursively
-				outputCleanup(filename, false);
-			} else {
-				// rm fiilename
-				fs.unlinkSync(filename);
-			}
+		} else if (stat.isDirectory()) {
+			// outputCleanup recursively
+			outputCleanup(filename, false);
+		} else {
+			// rm fiilename
+			fs.unlinkSync(filename);
+		}
 	}
 	fs.rmdirSync(dir);
 };
 
 /* precentage handler is used to hook build start and ending */
 var percentage_handler = function handler(percentage, msg) {
-	if ( 0 == percentage ) {
+	if (0 == percentage) {
 		/* Build Started */
 		outputCleanup(libPath(), true);
 		console.log("Build started... Good luck!");
-	} else if ( 1 == percentage ) {
+	} else if (1 == percentage) {
 		// TODO: No Error detection. :(
 		create_browser_version(webpack_opts.output.filename);
 
@@ -59,8 +59,8 @@ var percentage_handler = function handler(percentage, msg) {
 		dts.bundle(bundle_opts);
 
 		// Invokes lib/ cleanup
-		deleteEmpty(bundle_opts.baseDir, function(err, deleted) {
-			if ( err ) {
+		deleteEmpty(bundle_opts.baseDir, function (err, deleted) {
+			if (err) {
 				console.error("Couldn't clean up : " + err);
 				throw err;
 			} else {
@@ -76,7 +76,7 @@ var bundle_opts = {
 
 	// name of module likein package.json
 	// - used to declare module & import/require
-	name: 'ts-library-starter',
+	name: 'rxstore',
 	// path to entry-point (generated .d.ts file for main module)
 	// if you want to load all .d.ts files from a path recursively you can use "path/project/**/*.d.ts"
 	//  ^ *** Experimental, TEST NEEDED, see "All .d.ts files" section
@@ -172,8 +172,8 @@ var create_browser_version = function (inputJs) {
 		standalone: bundle_opts.name,
 	});
 
-	b.bundle(function(err, src) {
-		if ( err != null ) {
+	b.bundle(function (err, src) {
+		if (err != null) {
 			console.error("Browserify error:");
 			console.error(err);
 		}

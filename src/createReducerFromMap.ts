@@ -12,3 +12,5 @@ export const createReducerFromMap =
       }
       return reducer as TState;
     };
+
+export default createReducerFromMap;

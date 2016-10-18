@@ -12,7 +12,7 @@ import "rxjs/add/operator/toArray";
 import "rxjs/add/operator/toPromise";
 
 import {
-  Store, Action, Reducer, StateUpdate, StoreActionsMap,
+  Action, StateUpdate,
 } from "./interfaces";
 import { createStore, createStoreExtensions } from "./createStore";
 
@@ -124,9 +124,12 @@ describe("createStore", () => {
     describe("When an action is dispatched in the store through an extension", () => {
       const reducer = jest.fn((s, a) => ({ title: s.title + a.payload }));
       const state = { title: "hello" };
-      const store = createStore(reducer, state, createStoreExtensions({
+      const extendWith = createStoreExtensions({
         concat: (str: string) => ({ type: "CONCAT", payload: str }),
-      }));
+      });
+      const store = createStore(reducer, state, {
+        extendWith,
+      });
       const action = { type: "CONCAT", payload: " world" };
       (store as any).concat(" world");
       store.dispatch(action);

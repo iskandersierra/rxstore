@@ -1,7 +1,10 @@
 {
 	"compilerOptions": {
 		"experimentalDecorators": true,
-		"lib": ["es6", "dom"],
+		"lib": [
+			"es6",
+			"dom"
+		],
 		"module": "commonjs",
 		"target": "es6",
 		"noImplicitAny": true,
@@ -12,6 +15,7 @@
 		"declaration": true,
 		"outDir": "dist",
 		"removeComments": false,
+		"strictNullChecks": true,
 		"typeRoots": [
 			"node_modules/@types"
 		],
@@ -20,6 +24,7 @@
 		]
 	},
 	"files": [
+		"typefix/index.d.ts",
 		"src/main.ts"
 	],
 	"exclude": [

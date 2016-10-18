@@ -65,6 +65,7 @@
     "rxjs": "^5.0.0-rc.1"
   },
   "jest": {
+    "verbose": true,
     "scriptPreprocessor": "node_modules/typescript-babel-jest",
     "testEnvironment": "node",
     "testRegex": ".*\\.spec\\.ts$",
