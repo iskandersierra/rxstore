@@ -8,6 +8,7 @@ import "rxjs/add/observable/of";
 import "rxjs/add/observable/empty";
 import "rxjs/add/operator/first";
 import "rxjs/add/operator/take";
+import "rxjs/add/operator/timeout";
 import "rxjs/add/operator/toArray";
 import "rxjs/add/operator/toPromise";
 
@@ -35,8 +36,7 @@ describe("createStoreExtensions", () => {
         action$: Observable.empty<Action>(),
         state$: Observable.empty<{}>(),
         update$: Observable.empty<StateUpdate<{}>>(),
-        getState: jest.fn(),
-        dispatch: jest.fn(), // (action: Action) => { return; },
+        dispatch: jest.fn(),
       };
       describe("When the store is extended with map", () => {
         const extended = extender(store);
@@ -76,7 +76,9 @@ describe("createStore", () => {
       const reducer = jest.fn((s, a) => s);
       const state = { title: "hello" };
       const store = createStore(reducer, state);
-      const statePromise = store.state$.take(1).toArray().toPromise() as PromiseLike<{ title: string }>;
+      const statePromise = store.state$
+        .take(1).first().timeout(100)
+        .toPromise() as PromiseLike<{ title: string }>;
       it("it should not be null",
         () => expect(store).not.toBeFalsy());
       it("reducer should not be called yet",
@@ -87,14 +89,10 @@ describe("createStore", () => {
         () => expect(typeof store.state$).toBe("object"));
       it("it's update$ should be defined",
         () => expect(typeof store.update$).toBe("object"));
-      it("it's getState should be a function",
-        () => expect(typeof store.getState).toBe("function"));
-      it("it's getState should return initial state",
-        () => expect(store.getState()).toEqual(state));
       it("it's dispatch should be a function",
         () => expect(typeof store.dispatch).toBe("function"));
       it("is's state$ should have emitted just the initial state",
-        () => statePromise.then(states => expect(states).toEqual([state])));
+        () => statePromise.then(s => expect(s).toEqual(state)));
     }); // describe When a store is created
 
     describe("When an action is dispatched in the store", () => {
@@ -102,9 +100,15 @@ describe("createStore", () => {
       const state = { title: "hello" };
       const store = createStore(reducer, state);
       const action = { type: "CONCAT", payload: " world" };
-      const statePromise = store.state$.take(2).toArray().toPromise() as PromiseLike<{ title: string }>;
-      const actionPromise = store.action$.take(1).toArray().toPromise() as PromiseLike<Action>;
-      const updatePromise = store.update$.take(1).toArray().toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
+      const statePromise = store.state$
+        .take(2).toArray().timeout(100)
+        .toPromise() as PromiseLike<{ title: string }>;
+      const actionPromise = store.action$
+        .take(1).toArray().timeout(100)
+        .toPromise() as PromiseLike<Action>;
+      const updatePromise = store.update$
+        .take(1).toArray().timeout(100)
+        .toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
       store.dispatch(action);
       it("reducer should have been called with action",
         () => expect(reducer).toBeCalledWith(state, action));

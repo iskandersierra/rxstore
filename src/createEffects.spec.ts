@@ -20,7 +20,7 @@ import {
 } from "./interfaces";
 import { createStore, createStoreExtensions } from "./createStore";
 import {
-  logUpdatesEffect, logUpdatesByActionTypeEffect, consoleLogUpdatesEffect,
+  logUpdatesEffect, logUpdatesByActionTypeEffect,
   createEffects, createDisposers,
 } from "./createEffects";
 
@@ -47,19 +47,20 @@ describe("logUpdatesEffect", () => {
         const reducer = jest.fn((s, a) => s);
         const state = { title: "hello" };
         const store = createStore(reducer, state);
-        const update = {
-          action: { type: "A" },
-          state,
-        };
-        const loggerPromise = loggerEffect(store).take(1).first().toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
+        const update = { action: { type: "A" }, state };
+        const loggerPromise = loggerEffect(store)
+          .take(1).first()
+          .toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
         it("captioner and logger should have been called once",
           () => {
             store.dispatch(update.action);
-            expect(captioner).toHaveBeenCalledTimes(1);
-            expect(logger).toHaveBeenCalledTimes(1);
-            expect(captioner).toBeCalledWith(update, store);
-            expect(logger).toBeCalledWith("***CAPTION***", update);
-            return loggerPromise.then(up => expect(up).toEqual(update));
+            return loggerPromise.then(up => {
+              expect(captioner).toHaveBeenCalledTimes(1);
+              expect(logger).toHaveBeenCalledTimes(1);
+              expect(captioner).toBeCalledWith(update, store);
+              expect(logger).toBeCalledWith("***CAPTION***", update);
+              expect(up).toEqual(update);
+            });
           });
 
       }); // describe When a store gets the effect applied
@@ -81,17 +82,16 @@ describe("logUpdatesByActionTypeEffect", () => {
       const store = createStore(reducer, state, {
         extendWith: () => ({ caption: "MyStore" }),
       });
-      const update = {
-        action: { type: "A" },
-        state,
-      };
-      const loggerPromise = loggerEffect(store).take(1).first().toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
+      const update = { action: { type: "A" }, state };
+      const loggerPromise = loggerEffect(store)
+        .take(1).first()
+        .toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
       it("logger should have been called once",
         () => {
           store.dispatch(update.action);
-          expect(logger).toHaveBeenCalledTimes(1);
-          expect(logger).toBeCalledWith("MyStore: ON A", update);
           return loggerPromise.then(up => {
+            expect(logger).toHaveBeenCalledTimes(1);
+            expect(logger).toBeCalledWith("MyStore: ON A", update);
             expect(up).toEqual(update);
           });
         });

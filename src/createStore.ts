@@ -1,4 +1,11 @@
+import { Observable } from "rxjs/Observable";
+import "rxjs/add/operator/first";
+import "rxjs/add/operator/map";
+import "rxjs/add/operator/publishReplay";
+import "rxjs/add/operator/scan";
+import "rxjs/add/operator/startWith";
 import "rxjs/add/operator/subscribeOn";
+import "rxjs/add/operator/switchMap";
 import { Subject } from "rxjs/Subject";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { queue } from "rxjs/scheduler/queue";
@@ -44,28 +51,25 @@ export const createStore =
     options?: CreateStoreOptions<TState, TStore>
   ): TStore => {
     const { extendWith = undefined, effects = undefined } = options || {};
-    const stateSubject$ = new BehaviorSubject<TState>(initialState);
     const actionSubject$ = new Subject<Action>();
-    const updateSubject$ = new Subject<StateUpdate<TState>>();
-    const state$ = stateSubject$.asObservable().subscribeOn(scheduler);
     const action$ = actionSubject$.asObservable().subscribeOn(scheduler);
-    const update$ = updateSubject$.asObservable().subscribeOn(scheduler);
-    const getState = stateSubject$.getValue.bind(stateSubject$);
-    const dispatch = (action: Action) => {
-      const previousState = getState();
-      const state = reducer(previousState, action);
-      const update = { state, action };
-      actionSubject$.next(action);
-      stateSubject$.next(state);
-      updateSubject$.next(update);
-    };
+    const connectableState$ = action$
+      .scan((s, a) => reducer(s, a), initialState)
+      .startWith(initialState)
+      .publishReplay(1);
+    connectableState$.connect();
+    const state$ = connectableState$ as Observable<TState>;
+
+    const update$ = action$.switchMap(action =>
+      state$.first()
+        .map(state => ({ action, state } as StateUpdate<TState>)));
+    const dispatch = (action: Action) => actionSubject$.next(action);
 
     let store: TStore = {
       action$,
       state$,
       update$,
       dispatch,
-      getState,
     } as TStore;
 
     if (extendWith) {

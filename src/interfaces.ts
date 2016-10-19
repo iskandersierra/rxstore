@@ -34,6 +34,5 @@ export interface Store<TState> {
   action$: Observable<Action>;
   state$: Observable<TState>;
   update$: Observable<StateUpdate<TState>>;
-  getState(): TState;
   dispatch(action: Action): void;
 }
