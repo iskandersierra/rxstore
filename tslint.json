@@ -9,6 +9,7 @@
 			false,
 			"always-prefix"
 		],
-		"no-unused-variable": false
+		"no-unused-variable": false,
+		"object-literal-sort-keys": false
 	}
 }
