@@ -127,14 +127,21 @@ describe("createStore", () => {
       const extendWith = createStoreExtensions({
         concat: (str: string) => ({ type: "CONCAT", payload: str }),
       });
-      const store = createStore(reducer, state, {
-        extendWith,
-      });
+      const store = createStore(reducer, state, { extendWith, });
       const action = { type: "CONCAT", payload: " world" };
       (store as any).concat(" world");
       store.dispatch(action);
       it("reducer should have been called with action",
         () => expect(reducer).toBeCalledWith(state, action));
+    }); // describe When an action is dispatched in the store
+
+    describe("When a store is created with effects", () => {
+      const reducer = jest.fn();
+      const state = { title: "hello" };
+      const effects = jest.fn();
+      const store = createStore(reducer, state, { effects, });
+      it("it should call the given effects",
+        () => expect(effects).toBeCalledWith(store));
     }); // describe When an action is dispatched in the store
   }); // describe Given a simple store
 }); // describe createStore

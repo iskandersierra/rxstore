@@ -4,6 +4,7 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { queue } from "rxjs/scheduler/queue";
 import {
   Store, Action, Reducer, StateUpdate, StoreActionsMap,
+  EffectsDisposer,
 } from "./interfaces";
 import "object-assign";
 import objectAssign = require("object-assign");
@@ -33,6 +34,7 @@ export const createStoreExtensions =
 
 export interface CreateStoreOptions<TState, TStore extends Store<TState>> {
   extendWith?: (store: Store<TState>) => Object;
+  effects?: (store: TStore) => EffectsDisposer;
 }
 
 export const createStore =
@@ -41,7 +43,7 @@ export const createStore =
     initialState: TState,
     options?: CreateStoreOptions<TState, TStore>
   ): TStore => {
-    const { extendWith = undefined } = options || {};
+    const { extendWith = undefined, effects = undefined } = options || {};
     const stateSubject$ = new BehaviorSubject<TState>(initialState);
     const actionSubject$ = new Subject<Action>();
     const updateSubject$ = new Subject<StateUpdate<TState>>();
@@ -58,18 +60,22 @@ export const createStore =
       updateSubject$.next(update);
     };
 
-    const basicStore: Store<TState> = {
+    let store: TStore = {
       action$,
       state$,
       update$,
       dispatch,
       getState,
-    };
+    } as TStore;
 
-    if (!extendWith) {
-      return basicStore as TStore;
+    if (extendWith) {
+      store = objectAssign(store, extendWith(store)) as TStore;
     }
-    const store = objectAssign(basicStore, extendWith(basicStore)) as TStore;
+
+    if (effects) {
+      effects(store);
+    }
+
     return store;
   };
 
