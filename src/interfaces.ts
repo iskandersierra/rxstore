@@ -28,8 +28,6 @@ export interface StoreActionsMap {
 
 export type Effect = Observable<Action>;
 
-export type EffectsDisposer = () => void;
-
 export interface Store<TState> {
   action$: Observable<Action>;
   state$: Observable<TState>;

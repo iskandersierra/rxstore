@@ -4,7 +4,7 @@ import "rxjs/add/operator/do";
 import "rxjs/add/operator/subscribeOn";
 import { queue } from "rxjs/scheduler/queue";
 import {
-  Action, Dispatcher, Effect, EffectsDisposer, Store, StateUpdate,
+  Action, Dispatcher, Effect, Store, StateUpdate,
 } from "./interfaces";
 
 const scheduler = queue;
@@ -24,30 +24,8 @@ export const logUpdatesByActionTypeEffect =
     return caption + "ON " + up.action.type;
   });
 
-export const createDisposers =
-  (...disposers: EffectsDisposer[])
-    : EffectsDisposer => {
-    let isDisposed = false;
-
-    const unlisten = () => {
-      if (isDisposed) { return; }
-      isDisposed = true;
-      disposers.forEach(s => s());
-      disposers = [];
-    };
-    return unlisten;
-  };
-
 export const createEffects =
-  (dispatch: Dispatcher, ...effects: Effect[])
-    : EffectsDisposer => {
-    const toDisposer = (e: Effect) => {
-      const subscription = e.subscribeOn(scheduler).subscribe(dispatch);
-      return () => subscription.unsubscribe();
-    };
-    let disposers = effects.map(toDisposer);
-
-    return createDisposers(...disposers);
-  };
+  (dispatch: Dispatcher, ...effects: Effect[]): void =>
+    effects.forEach(e => e.subscribeOn(scheduler).subscribe(dispatch));
 
 export default createEffects;
