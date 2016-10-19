@@ -1,3 +1,4 @@
+/// <reference path="../typefix/jest.d.ts" />
 "use strict";
 
 import "jest";
@@ -6,6 +7,7 @@ require("babel-polyfill");
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/of";
 import "rxjs/add/observable/empty";
+import "rxjs/add/operator/delay";
 import "rxjs/add/operator/first";
 import "rxjs/add/operator/take";
 import "rxjs/add/operator/timeout";
@@ -146,6 +148,105 @@ describe("createStore", () => {
       const store = createStore(reducer, state, { effects, });
       it("it should call the given effects",
         () => expect(effects).toBeCalledWith(store));
+    }); // describe When an action is dispatched in the store
+
+    describe("When a store is created with tunnel for all actions with no mapping", () => {
+      const reducer = jest.fn();
+      const state = { title: "hello" };
+      const dispatch = jest.fn();
+      const store = createStore(reducer, state, {
+        tunnel: {
+          actions: "all",
+          dispatch,
+        },
+      });
+      it("it should call the given tunnel dispatch",
+        () => {
+          store.dispatch({ type: "TEST1" });
+          const promise = Observable.of(1).delay(40)
+            .toPromise() as PromiseLike<any>;
+          return promise.then(() => {
+            expect(dispatch).toHaveBeenCalledTimes(1);
+            expect(dispatch).toBeCalledWith({ type: "TEST1" });
+          });
+        });
+    }); // describe When an action is dispatched in the store
+
+    describe("When a store is created with tunnel for all actions with mapping", () => {
+      const reducer = jest.fn();
+      const state = { title: "hello" };
+      const dispatch = jest.fn();
+      const store = createStore(reducer, state, {
+        tunnel: {
+          actions: a => ({ type: "WRAPPER", payload: a }),
+          dispatch,
+        },
+      });
+      it("it should call the given tunnel dispatch",
+        () => {
+          store.dispatch({ type: "TEST1" });
+          const promise = Observable.of(1).delay(40)
+            .toPromise() as PromiseLike<any>;
+          return promise.then(() => {
+            expect(dispatch).toHaveBeenCalledTimes(1);
+            expect(dispatch).toBeCalledWith({ type: "WRAPPER", payload: { type: "TEST1" } });
+          });
+        });
+    }); // describe When an action is dispatched in the store
+
+    describe("When a store is created with tunnel for a list of action names", () => {
+      const reducer = jest.fn();
+      const state = { title: "hello" };
+      const dispatch = jest.fn();
+      const store = createStore(reducer, state, {
+        tunnel: {
+          actions: ["TEST1", "TEST2"],
+          dispatch,
+        },
+      });
+      it("it should call the given tunnel dispatch",
+        () => {
+          store.dispatch({ type: "TEST1" });
+          store.dispatch({ type: "TEST2" });
+          store.dispatch({ type: "TEST3" });
+          const promise = Observable.of(1).delay(40)
+            .toPromise() as PromiseLike<any>;
+          return promise.then(() => {
+            expect(dispatch).toHaveBeenCalledTimes(2);
+            expect(dispatch).toBeCalledWith({ type: "TEST1" });
+            expect(dispatch).toBeCalledWith({ type: "TEST2" });
+            expect(dispatch).not.toBeCalledWith({ type: "TEST3" });
+          });
+        });
+    }); // describe When an action is dispatched in the store
+
+    describe("When a store is created with tunnel for some action mappings", () => {
+      const reducer = jest.fn();
+      const state = { title: "hello" };
+      const dispatch = jest.fn();
+      const store = createStore(reducer, state, {
+        tunnel: {
+          actions: {
+            ["TEST1"]: a => ({ type: "WRAPPER1", payload: a }),
+            ["TEST2"]: a => ({ type: "WRAPPER2", payload: a }),
+          },
+          dispatch,
+        },
+      });
+      it("it should call the given tunnel dispatch",
+        () => {
+          store.dispatch({ type: "TEST1" });
+          store.dispatch({ type: "TEST2" });
+          store.dispatch({ type: "TEST3" });
+          const promise = Observable.of(1).delay(40)
+            .toPromise() as PromiseLike<any>;
+          return promise.then(() => {
+            expect(dispatch).toHaveBeenCalledTimes(2);
+            expect(dispatch).toBeCalledWith({ type: "WRAPPER1", payload: { type: "TEST1" } });
+            expect(dispatch).toBeCalledWith({ type: "WRAPPER2", payload: { type: "TEST2" } });
+            expect(dispatch).not.toBeCalledWith({ type: "WRAPPER3", payload: { type: "TEST3" } });
+          });
+        });
     }); // describe When an action is dispatched in the store
   }); // describe Given a simple store
 }); // describe createStore

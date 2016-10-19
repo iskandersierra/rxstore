@@ -1,20 +1,28 @@
 import { Observable } from "rxjs/Observable";
+import "rxjs/add/operator/do";
 import "rxjs/add/operator/first";
+import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/publishReplay";
 import "rxjs/add/operator/scan";
 import "rxjs/add/operator/startWith";
 import "rxjs/add/operator/subscribeOn";
 import "rxjs/add/operator/switchMap";
+import "rxjs/add/operator/takeUntil";
 import { Subject } from "rxjs/Subject";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { queue } from "rxjs/scheduler/queue";
 import {
   Store, Action, Reducer, StateUpdate, StoreActionsMap,
-  EffectsDisposer,
+  Dispatcher,
 } from "./interfaces";
 import "object-assign";
 import objectAssign = require("object-assign");
+
+export const STORE_ACTIONS = {
+  INIT: "RxStore@STORE@INIT",
+  FINISH: "RxStore@STORE@FINISH",
+};
 
 const scheduler = queue;
 
@@ -39,9 +47,19 @@ export const createStoreExtensions =
       return result;
     };
 
+export type ActionMap = (a: Action) => Action;
+export type ActionMapping = {
+  [name: string]: boolean | ActionMap;
+};
+export type ActionTunnel = {
+  dispatch: Dispatcher;
+  actions: "all" | string[] | ActionMap | ActionMapping;
+};
+
 export interface CreateStoreOptions<TState, TStore extends Store<TState>> {
   extendWith?: (store: Store<TState>) => Object;
-  effects?: (store: TStore) => EffectsDisposer;
+  effects?: (store: TStore) => void;
+  tunnel?: ActionTunnel | ActionTunnel[];
 }
 
 export const createStore =
@@ -50,7 +68,11 @@ export const createStore =
     initialState: TState,
     options?: CreateStoreOptions<TState, TStore>
   ): TStore => {
-    const { extendWith = undefined, effects = undefined } = options || {};
+    const {
+      extendWith = undefined,
+      effects = undefined,
+      tunnel = undefined,
+    } = options || {};
     const actionSubject$ = new Subject<Action>();
     const action$ = actionSubject$.asObservable().subscribeOn(scheduler);
     const connectableState$ = action$
@@ -63,7 +85,12 @@ export const createStore =
     const update$ = action$.switchMap(action =>
       state$.first()
         .map(state => ({ action, state } as StateUpdate<TState>)));
-    const dispatch = (action: Action) => actionSubject$.next(action);
+    const dispatch = (action: Action) => {
+      actionSubject$.next(action);
+      if (action.type === STORE_ACTIONS.FINISH) {
+        actionSubject$.complete();
+      }
+    };
 
     let store: TStore = {
       action$,
@@ -78,6 +105,40 @@ export const createStore =
 
     if (effects) {
       effects(store);
+    }
+
+    if (tunnel) {
+      const tunnels = Array.isArray(tunnel) ? tunnel : [tunnel];
+      tunnels.forEach(({ dispatch: disp, actions }) => {
+
+        if (actions === "all") {
+          store.action$.subscribe(disp);
+        } else if (Array.isArray(actions)) {
+          store.action$
+            .filter(a => actions.indexOf(a.type) >= 0)
+            .subscribe(disp);
+        } else if (typeof actions === "function") {
+          store.action$
+            .map(actions)
+            .subscribe(disp);
+        } else {
+          const filter = (a: Action) =>
+            (actions as Object).hasOwnProperty(a.type) &&
+            !!actions[a.type];
+          const map = (a: Action) => {
+            const act = actions[a.type];
+            if (typeof act === "function") {
+              return (act(a));
+            } else {
+              return a;
+            }
+          };
+          store.action$
+            .filter(filter)
+            .map(map)
+            .subscribe(disp);
+        }
+      });
     }
 
     return store;
