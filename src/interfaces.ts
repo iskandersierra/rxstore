@@ -20,7 +20,6 @@ export interface ReducersMap<TState> {
 export interface StateUpdate<TState> {
   state: TState;
   action: Action;
-  previousState: TState;
 }
 
 export interface StoreActionsMap {

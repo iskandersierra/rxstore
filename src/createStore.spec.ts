@@ -117,7 +117,7 @@ describe("createStore", () => {
         ])));
       it("is's update$ should have emitted the state update",
         () => updatePromise.then(updates => expect(updates).toEqual([{
-          action, state: { title: "hello world" }, previousState: state,
+          action, state: { title: "hello world" },
         }])));
     }); // describe When an action is dispatched in the store
 

@@ -50,7 +50,6 @@ describe("logUpdatesEffect", () => {
         const update = {
           action: { type: "A" },
           state,
-          previousState: state,
         };
         const loggerPromise = loggerEffect(store).take(1).first().toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
         it("captioner and logger should have been called once",
@@ -85,7 +84,6 @@ describe("logUpdatesByActionTypeEffect", () => {
       const update = {
         action: { type: "A" },
         state,
-        previousState: state,
       };
       const loggerPromise = loggerEffect(store).take(1).first().toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
       it("logger should have been called once",

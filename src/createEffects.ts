@@ -12,9 +12,10 @@ const scheduler = queue;
 export const logUpdatesEffect =
   (captioner: (update: StateUpdate<any>, store: Store<any>) => any) =>
     (logger: (message?: any, ...parameters: any[]) => void) =>
-      (store: Store<any>) =>
-        store.update$
-          .do((up: StateUpdate<any>) => logger(captioner(up, store), up));
+      (store: Store<any>) => {
+        const effect = (up: StateUpdate<any>) => logger(captioner(up, store), up);
+        return store.update$.do(effect);
+      };
 
 export const logUpdatesByActionTypeEffect =
   logUpdatesEffect((up, store) => {
@@ -22,9 +23,6 @@ export const logUpdatesByActionTypeEffect =
     if (caption) { caption += ": "; } else { caption = ""; }
     return caption + "ON " + up.action.type;
   });
-
-export const consoleLogUpdatesEffect =
-  logUpdatesByActionTypeEffect(console.log.bind(console));
 
 export const createDisposers =
   (...disposers: EffectsDisposer[])

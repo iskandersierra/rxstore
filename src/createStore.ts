@@ -54,7 +54,7 @@ export const createStore =
     const dispatch = (action: Action) => {
       const previousState = getState();
       const state = reducer(previousState, action);
-      const update = { state, action, previousState };
+      const update = { state, action };
       actionSubject$.next(action);
       stateSubject$.next(state);
       updateSubject$.next(update);
