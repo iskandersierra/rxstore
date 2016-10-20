@@ -34,3 +34,26 @@ export interface Store<TState> {
   update$: Observable<StateUpdate<TState>>;
   dispatch(action: Action): void;
 }
+
+export type ActionMap = (a: Action) => Action;
+export type ActionMapping = {
+  [name: string]: boolean | ActionMap;
+};
+export interface ActionTunnel {
+  dispatch: Dispatcher;
+  actions: "all" | string[] | ActionMap | ActionMapping;
+};
+export type StoreExtension<TState> =
+  (store: Store<TState>) => Object;
+
+export type EffectsFactory<TStore> =
+  (store: TStore) => void;
+
+export interface CreateStoreOptions<TState, TStore extends Store<TState>> {
+  extendWith?: StoreExtension<TState> | StoreExtension<TState>[];
+  effects?: EffectsFactory<TStore> | EffectsFactory<TStore>[];
+  tunnel?: ActionTunnel | ActionTunnel[];
+  middlewares?: StoreMiddleware<TStore>[];
+}
+
+export type StoreMiddleware<TStore> = (store: TStore) => TStore;

@@ -14,7 +14,7 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { queue } from "rxjs/scheduler/queue";
 import {
   Store, Action, Reducer, StateUpdate, StoreActionsMap,
-  Dispatcher,
+  Dispatcher, CreateStoreOptions,
 } from "./interfaces";
 import "object-assign";
 import objectAssign = require("object-assign");
@@ -46,21 +46,6 @@ export const createStoreExtensions =
       }
       return result;
     };
-
-export type ActionMap = (a: Action) => Action;
-export type ActionMapping = {
-  [name: string]: boolean | ActionMap;
-};
-export type ActionTunnel = {
-  dispatch: Dispatcher;
-  actions: "all" | string[] | ActionMap | ActionMapping;
-};
-
-export interface CreateStoreOptions<TState, TStore extends Store<TState>> {
-  extendWith?: (store: Store<TState>) => Object;
-  effects?: (store: TStore) => void;
-  tunnel?: ActionTunnel | ActionTunnel[];
-}
 
 export const createStore =
   <TState, TStore extends Store<TState>>(
@@ -100,11 +85,15 @@ export const createStore =
     } as TStore;
 
     if (extendWith) {
-      store = objectAssign(store, extendWith(store)) as TStore;
+      const array = Array.isArray(extendWith) ? extendWith : [extendWith];
+      array.forEach(ext => {
+        store = objectAssign(store, ext(store)) as TStore;
+      });
     }
 
     if (effects) {
-      effects(store);
+      const array = Array.isArray(effects) ? effects : [effects];
+      array.forEach(eff => { eff(store); });
     }
 
     if (tunnel) {
