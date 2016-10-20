@@ -47,6 +47,11 @@ export const createStoreExtensions =
       return result;
     };
 
+export function applyMiddlewares<TState, TStore extends Store<TState>>(
+  ...middlewares: StoreMiddleware<TStore>[]) {
+    return (store: TStore) => middlewares.reduce((s, m) => m(s), store);
+}
+
 export const createStore =
   <TState, TStore extends Store<TState>>(
     reducer: Reducer<TState>,
@@ -72,11 +77,9 @@ export const createStore =
       }
     };
 
-    let store = { action$, state$, update$, dispatch } as TStore;
-
-    middlewares.forEach(m => store = m(store) as TStore);
-
-    return store;
+    return applyMiddlewares<TState, Store<TState>>
+      (...middlewares)
+      ({ action$, state$, update$, dispatch }) as TStore;
   };
 
 export default createStore;
