@@ -40,7 +40,7 @@ export type ActionMapping = {
   [name: string]: boolean | ActionMap;
 };
 export interface ActionTunnel {
-  dispatch: Dispatcher;
+  dispatch: Dispatcher | Observable<Dispatcher>;
   actions: "all" | string[] | ActionMap | ActionMapping;
 };
 export type StoreExtension<TState> =

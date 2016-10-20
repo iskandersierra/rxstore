@@ -110,4 +110,25 @@ describe("tunnelActions", () => {
         });
       });
   }); // describe When an action is dispatched in the store
+
+  describe("When a store is created with tunnel with a dispatch stream", () => {
+    const reducer = jest.fn();
+    const state = { title: "hello" };
+    const dispatch = jest.fn();
+    const store = createStore(reducer, state, tunnelActions({
+      actions: "all",
+      dispatch: Observable.of(dispatch),
+    }));
+    it("it should call the given tunnel dispatch",
+      () => {
+        store.dispatch({ type: "TEST1" });
+        store.dispatch({ type: "TEST2" });
+        store.dispatch({ type: "TEST3" });
+        const promise = Observable.of(1).delay(40)
+          .toPromise() as PromiseLike<any>;
+        return promise.then(() => {
+          expect(dispatch).toHaveBeenCalledTimes(3);
+        });
+      });
+  }); // describe When an action is dispatched in the store
 }); // describe extendWith
