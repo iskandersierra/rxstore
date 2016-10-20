@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/iskandersierra/rxstore/compare/v1.0.0...v1.1.0) (2016-10-20)
+
+
+### Features
+
+* **actionCreator:** Added for making easier defining custom actions ([e9dee8c](https://github.com/iskandersierra/rxstore/commit/e9dee8c))
+* **reassign:** Added utility functions reassign and reassignif ([fcaef79](https://github.com/iskandersierra/rxstore/commit/fcaef79))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/iskandersierra/rxstore/compare/v0.1.0...v1.0.0) (2016-10-20)
 
