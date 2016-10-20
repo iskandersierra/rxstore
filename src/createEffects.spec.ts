@@ -19,6 +19,7 @@ import {
   Store, Action, Reducer, StateUpdate,
 } from "./interfaces";
 import { createStore, createStoreExtensions } from "./createStore";
+import extendWith from "./extendWith";
 import {
   logUpdatesEffect, logUpdatesByActionTypeEffect,
   createEffects,
@@ -79,9 +80,9 @@ describe("logUpdatesByActionTypeEffect", () => {
     describe("When a store gets the effect applied", () => {
       const reducer = jest.fn((s, a) => s);
       const state = { title: "hello" };
-      const store = createStore(reducer, state, {
-        extendWith: () => ({ caption: "MyStore" }),
-      });
+      const store = createStore(reducer, state,
+        extendWith(() => ({ caption: "MyStore" }))
+      );
       const update = { action: { type: "A" }, state };
       const loggerPromise = loggerEffect(store)
         .take(1).first()

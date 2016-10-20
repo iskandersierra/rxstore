@@ -14,7 +14,7 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { queue } from "rxjs/scheduler/queue";
 import {
   Store, Action, Reducer, StateUpdate, StoreActionsMap,
-  Dispatcher, CreateStoreOptions,
+  Dispatcher, StoreMiddleware,
 } from "./interfaces";
 import "object-assign";
 import objectAssign = require("object-assign");
@@ -51,13 +51,8 @@ export const createStore =
   <TState, TStore extends Store<TState>>(
     reducer: Reducer<TState>,
     initialState: TState,
-    options?: CreateStoreOptions<TState, TStore>
+    ...middlewares: StoreMiddleware<Store<TState>>[]
   ): TStore => {
-    const {
-      extendWith = undefined,
-      effects = undefined,
-      tunnel = undefined,
-    } = options || {};
     const actionSubject$ = new Subject<Action>();
     const action$ = actionSubject$.asObservable().subscribeOn(scheduler);
     const connectableState$ = action$
@@ -77,58 +72,9 @@ export const createStore =
       }
     };
 
-    let store: TStore = {
-      action$,
-      state$,
-      update$,
-      dispatch,
-    } as TStore;
+    let store = { action$, state$, update$, dispatch } as TStore;
 
-    if (extendWith) {
-      const array = Array.isArray(extendWith) ? extendWith : [extendWith];
-      array.forEach(ext => {
-        store = objectAssign(store, ext(store)) as TStore;
-      });
-    }
-
-    if (effects) {
-      const array = Array.isArray(effects) ? effects : [effects];
-      array.forEach(eff => { eff(store); });
-    }
-
-    if (tunnel) {
-      const tunnels = Array.isArray(tunnel) ? tunnel : [tunnel];
-      tunnels.forEach(({ dispatch: disp, actions }) => {
-
-        if (actions === "all") {
-          store.action$.subscribe(disp);
-        } else if (Array.isArray(actions)) {
-          store.action$
-            .filter(a => actions.indexOf(a.type) >= 0)
-            .subscribe(disp);
-        } else if (typeof actions === "function") {
-          store.action$
-            .map(actions)
-            .subscribe(disp);
-        } else {
-          const filter = (a: Action) =>
-            (actions as Object).hasOwnProperty(a.type) &&
-            !!actions[a.type];
-          const map = (a: Action) => {
-            const act = actions[a.type];
-            if (typeof act === "function") {
-              return (act(a));
-            } else {
-              return a;
-            }
-          };
-          store.action$
-            .filter(filter)
-            .map(map)
-            .subscribe(disp);
-        }
-      });
-    }
+    middlewares.forEach(m => store = m(store) as TStore);
 
     return store;
   };

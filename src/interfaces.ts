@@ -49,11 +49,4 @@ export type StoreExtension<TState> =
 export type EffectsFactory<TStore> =
   (store: TStore) => void;
 
-export interface CreateStoreOptions<TState, TStore extends Store<TState>> {
-  extendWith?: StoreExtension<TState> | StoreExtension<TState>[];
-  effects?: EffectsFactory<TStore> | EffectsFactory<TStore>[];
-  tunnel?: ActionTunnel | ActionTunnel[];
-  middlewares?: StoreMiddleware<TStore>[];
-}
-
 export type StoreMiddleware<TStore> = (store: TStore) => TStore;

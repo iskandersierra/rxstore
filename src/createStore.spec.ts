@@ -18,6 +18,9 @@ import {
   Action, StateUpdate,
 } from "./interfaces";
 import { createStore, createStoreExtensions } from "./createStore";
+import { extendWith } from "./extendWith";
+import { withEffects } from "./withEffects";
+import { tunnelActions } from "./tunnelActions";
 
 describe("createStoreExtensions", () => {
   describe("Sanity checks", () => {
@@ -63,8 +66,6 @@ describe("createStoreExtensions", () => {
       }); // describe When the store is extended with map
     }); // describe Given a simple store
   }); // describe Given an action map
-
-
 }); // describe createStoreExtensions
 
 describe("createStore", () => {
@@ -130,10 +131,10 @@ describe("createStore", () => {
     describe("When an action is dispatched in the store through an extension", () => {
       const reducer = jest.fn((s, a) => ({ title: s.title + a.payload }));
       const state = { title: "hello" };
-      const extendWith = createStoreExtensions({
+      const extender = createStoreExtensions({
         concat: (str: string) => ({ type: "CONCAT", payload: str }),
       });
-      const store = createStore(reducer, state, { extendWith, });
+      const store = createStore(reducer, state, extendWith(extender));
       const action = { type: "CONCAT", payload: " world" };
       (store as any).concat(" world");
       store.dispatch(action);
@@ -145,7 +146,7 @@ describe("createStore", () => {
       const reducer = jest.fn();
       const state = { title: "hello" };
       const effects = jest.fn();
-      const store = createStore(reducer, state, { effects, });
+      const store = createStore(reducer, state, withEffects(effects));
       it("it should call the given effects",
         () => expect(effects).toBeCalledWith(store));
     }); // describe When an action is dispatched in the store
@@ -154,12 +155,10 @@ describe("createStore", () => {
       const reducer = jest.fn();
       const state = { title: "hello" };
       const dispatch = jest.fn();
-      const store = createStore(reducer, state, {
-        tunnel: {
-          actions: "all",
-          dispatch,
-        },
-      });
+      const store = createStore(reducer, state, tunnelActions({
+        actions: "all",
+        dispatch,
+      }));
       it("it should call the given tunnel dispatch",
         () => {
           store.dispatch({ type: "TEST1" });
@@ -176,12 +175,10 @@ describe("createStore", () => {
       const reducer = jest.fn();
       const state = { title: "hello" };
       const dispatch = jest.fn();
-      const store = createStore(reducer, state, {
-        tunnel: {
-          actions: a => ({ type: "WRAPPER", payload: a }),
-          dispatch,
-        },
-      });
+      const store = createStore(reducer, state, tunnelActions({
+        actions: a => ({ type: "WRAPPER", payload: a }),
+        dispatch,
+      }));
       it("it should call the given tunnel dispatch",
         () => {
           store.dispatch({ type: "TEST1" });
@@ -198,12 +195,10 @@ describe("createStore", () => {
       const reducer = jest.fn();
       const state = { title: "hello" };
       const dispatch = jest.fn();
-      const store = createStore(reducer, state, {
-        tunnel: {
-          actions: ["TEST1", "TEST2"],
-          dispatch,
-        },
-      });
+      const store = createStore(reducer, state, tunnelActions({
+        actions: ["TEST1", "TEST2"],
+        dispatch,
+      }));
       it("it should call the given tunnel dispatch",
         () => {
           store.dispatch({ type: "TEST1" });
@@ -224,15 +219,13 @@ describe("createStore", () => {
       const reducer = jest.fn();
       const state = { title: "hello" };
       const dispatch = jest.fn();
-      const store = createStore(reducer, state, {
-        tunnel: {
-          actions: {
-            ["TEST1"]: a => ({ type: "WRAPPER1", payload: a }),
-            ["TEST2"]: a => ({ type: "WRAPPER2", payload: a }),
-          },
-          dispatch,
+      const store = createStore(reducer, state, tunnelActions({
+        actions: {
+          ["TEST1"]: a => ({ type: "WRAPPER1", payload: a }),
+          ["TEST2"]: a => ({ type: "WRAPPER2", payload: a }),
         },
-      });
+        dispatch,
+      }));
       it("it should call the given tunnel dispatch",
         () => {
           store.dispatch({ type: "TEST1" });
