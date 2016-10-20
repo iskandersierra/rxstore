@@ -54,8 +54,3 @@ All notable changes to this project will be documented in this file. See [standa
 * **createStore:** Adding code and tests ([df83696](https://github.com/iskandersierra/rxstore/commit/df83696))
 
 
-
-# Change Log
-
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
-
