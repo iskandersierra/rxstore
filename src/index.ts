@@ -8,3 +8,5 @@ export * from "./createEffects";
 export * from "./extendWith";
 export * from "./tunnelActions";
 export * from "./withEffects";
+
+export * from "./utils";
