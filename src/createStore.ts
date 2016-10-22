@@ -56,10 +56,11 @@ export const createStore =
         actionSubject$.complete();
       }
     };
+    const finish = () => StoreActions.finish.dispatchOn(dispatch);
 
     return applyMiddlewares<TState, Store<TState>>
       (...middlewares, (s => { StoreActions.init.dispatchOn(s.dispatch); return s; }))
-      ({ action$, state$, update$, dispatch }) as TStore;
+      ({ action$, state$, update$, dispatch, finish }) as TStore;
   };
 
 export default createStore;

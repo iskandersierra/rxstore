@@ -33,6 +33,7 @@ export interface Store<TState> {
   state$: Observable<TState>;
   update$: Observable<StateUpdate<TState>>;
   dispatch(action: Action): void;
+  finish(): void;
 }
 
 export type ActionMap = (a: Action) => Action;

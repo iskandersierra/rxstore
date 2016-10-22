@@ -121,5 +121,18 @@ describe("createStore", () => {
         return updatePromise;
       });
     });    // When a FINISH action is dispatched
+
+    describe("When a finish() action is dispatched", () => {
+      const reducer = jest.fn((s, a) => s);
+      const state = { title: "hello" };
+      const store = createStore(reducer, state);
+      const actionPromise = store.action$
+        .last().timeout(100)
+        .toPromise() as PromiseLike<any>;
+      it("the store's actions stream should be completed", () => {
+        store.finish();
+        return actionPromise;
+      });
+    });    // When a FINISH action is dispatched
   }); // describe Given a simple store
 }); // describe createStore

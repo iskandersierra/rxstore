@@ -10,7 +10,7 @@ import "rxjs/add/observable/of";
 import "rxjs/add/operator/delay";
 import "rxjs/add/operator/toPromise";
 import { Action, StateUpdate } from "./interfaces";
-import { createStore, createStoreExtensions } from "./createStore";
+import { createStore } from "./createStore";
 import { tunnelActions } from "./tunnelActions";
 
 describe("tunnelActions", () => {
