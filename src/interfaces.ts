@@ -51,12 +51,13 @@ export type EffectsFactory<TStore> =
 
 export type StoreMiddleware<TStore> = (store: TStore) => TStore;
 
-export type EmptyReducer<TState> = (state: TState) => TState;
+export type EmptyReducer<TState> =
+  (state: TState) => TState;
 
 export type TypedReducer<TState, TPayload> =
   (state: TState, payload: TPayload) => TState;
 
-export interface EmptyActionInstance<TState> {
+export interface EmptyActionDescription<TState> {
   kind: "empty";
   type: string;
   create: () => Action;
@@ -64,7 +65,7 @@ export interface EmptyActionInstance<TState> {
   reducer: EmptyReducer<TState> | undefined;
 }
 
-export interface TypedActionInstance<TState, TPayload> {
+export interface TypedActionDescription<TState, TPayload> {
   kind: "typed";
   type: string;
   create: (payload: TPayload) => Action;
@@ -73,11 +74,11 @@ export interface TypedActionInstance<TState, TPayload> {
 }
 
 export interface ActionCreator<TState> {
-  (type: string, reducer?: EmptyReducer<TState>): EmptyActionInstance<TState>;
+  (type: string, reducer?: EmptyReducer<TState>): EmptyActionDescription<TState>;
 
-  of<T>(type: string, reducer?: TypedReducer<TState, T>): TypedActionInstance<TState, T>;
+  of<T>(type: string, reducer?: TypedReducer<TState, T>): TypedActionDescription<TState, T>;
 }
 
 export interface ActionInstanceMapping<TState> {
-  [type: string]: EmptyActionInstance<TState> | TypedActionInstance<TState, any>;
+  [type: string]: EmptyActionDescription<TState> | TypedActionDescription<TState, any>;
 }
