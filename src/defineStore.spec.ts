@@ -5,10 +5,9 @@ import "jest";
 require("babel-core/register");
 require("babel-polyfill");
 
-import {
-  Action, StateUpdate,
-} from "./interfaces";
+import { Action, StateUpdate } from "./interfaces";
 import { defineStore } from "./defineStore";
+import { StoreActions } from "./createStore";
 
 describe("defineStore", () => {
   describe("Sanity checks", () => {
@@ -35,7 +34,7 @@ describe("defineStore", () => {
           expect(store.dispatch).toBeTruthy();
         });
         it("reducer should has not been called", () =>
-          expect(reducer).not.toBeCalled());
+          expect(reducer).toBeCalledWith(0, StoreActions.init.create()));
         it("newState should has been called once", () =>
           expect(newState).toHaveBeenCalledTimes(1));
         it("aMiddleware should has been called once", () =>

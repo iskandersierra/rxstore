@@ -14,14 +14,15 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { queue } from "rxjs/scheduler/queue";
 import {
   Store, Action, Reducer, StateUpdate, StoreActionsMap,
-  Dispatcher, StoreMiddleware,
+  Dispatcher, StoreMiddleware, EmptyActionDescription,
 } from "./interfaces";
-import "object-assign";
-import objectAssign = require("object-assign");
+import { actionCreator } from "./actionCreator";
 
-export const STORE_ACTIONS = {
-  INIT: "RxStore@STORE@INIT",
-  FINISH: "RxStore@STORE@FINISH",
+const newAction = actionCreator("RxStore@STORE@");
+
+export const StoreActions = {
+  init: newAction("INIT"),
+  finish: newAction("FINISH"),
 };
 
 const scheduler = queue;
@@ -51,13 +52,13 @@ export const createStore =
         .map(state => ({ action, state } as StateUpdate<TState>)));
     const dispatch = (action: Action) => {
       actionSubject$.next(action);
-      if (action.type === STORE_ACTIONS.FINISH) {
+      if (action.type === StoreActions.finish.type) {
         actionSubject$.complete();
       }
     };
 
     return applyMiddlewares<TState, Store<TState>>
-      (...middlewares)
+      (...middlewares, (s => { StoreActions.init.dispatchOn(s.dispatch); return s; }))
       ({ action$, state$, update$, dispatch }) as TStore;
   };
 

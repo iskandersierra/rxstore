@@ -34,7 +34,7 @@ describe("tunnelActions", () => {
         const promise = Observable.of(1).delay(40)
           .toPromise() as PromiseLike<any>;
         return promise.then(() => {
-          expect(dispatch).toHaveBeenCalledTimes(1);
+          expect(dispatch).toHaveBeenCalledTimes(1 + 1);
           expect(dispatch).toBeCalledWith({ type: "TEST1" });
         });
       });
@@ -54,7 +54,7 @@ describe("tunnelActions", () => {
         const promise = Observable.of(1).delay(40)
           .toPromise() as PromiseLike<any>;
         return promise.then(() => {
-          expect(dispatch).toHaveBeenCalledTimes(1);
+          expect(dispatch).toHaveBeenCalledTimes(1 + 1);
           expect(dispatch).toBeCalledWith({ type: "WRAPPER", payload: { type: "TEST1" } });
         });
       });
@@ -127,7 +127,7 @@ describe("tunnelActions", () => {
         const promise = Observable.of(1).delay(40)
           .toPromise() as PromiseLike<any>;
         return promise.then(() => {
-          expect(dispatch).toHaveBeenCalledTimes(3);
+          expect(dispatch).toHaveBeenCalledTimes(1 + 3);
         });
       });
   }); // describe When an action is dispatched in the store

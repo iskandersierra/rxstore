@@ -18,7 +18,7 @@ import "rxjs/add/operator/toPromise";
 import {
   Action, StateUpdate,
 } from "./interfaces";
-import { createStore, STORE_ACTIONS } from "./createStore";
+import { createStore, StoreActions } from "./createStore";
 import { extendWith } from "./extendWith";
 import { withEffects } from "./withEffects";
 import { tunnelActions } from "./tunnelActions";
@@ -40,7 +40,7 @@ describe("createStore", () => {
       it("it should not be null",
         () => expect(store).not.toBeFalsy());
       it("reducer should not be called yet",
-        () => expect(reducer).not.toBeCalled());
+        () => expect(reducer).toBeCalledWith(state, StoreActions.init.create()));
       it("it's action$ should be defined",
         () => expect(typeof store.action$).toBe("object"));
       it("it's state$ should be defined",
@@ -54,7 +54,7 @@ describe("createStore", () => {
     }); // describe When a store is created
 
     describe("When an action is dispatched in the store", () => {
-      const reducer = jest.fn((s, a) => ({ title: s.title + a.payload }));
+      const reducer = jest.fn((s, a) => a.type === "CONCAT" ? ({ title: s.title + a.payload }) : s);
       const state = { title: "hello" };
       const store = createStore(reducer, state);
       const action = { type: "CONCAT", payload: " world" };
@@ -91,7 +91,7 @@ describe("createStore", () => {
         .last().timeout(100)
         .toPromise() as PromiseLike<any>;
       it("the store's actions stream should be completed", () => {
-        store.dispatch({ type: STORE_ACTIONS.FINISH });
+        StoreActions.finish.dispatchOn(store.dispatch);
         return actionPromise;
       });
     });    // When a FINISH action is dispatched
@@ -104,7 +104,7 @@ describe("createStore", () => {
         .last().timeout(100)
         .toPromise() as PromiseLike<any>;
       it("the store's states stream should be completed", () => {
-        store.dispatch({ type: STORE_ACTIONS.FINISH });
+        StoreActions.finish.dispatchOn(store.dispatch);
         return statePromise;
       });
     });    // When a FINISH action is dispatched
@@ -117,7 +117,7 @@ describe("createStore", () => {
         .last().timeout(100)
         .toPromise() as PromiseLike<any>;
       it("the store's updates stream should be completed", () => {
-        store.dispatch({ type: STORE_ACTIONS.FINISH });
+        StoreActions.finish.dispatchOn(store.dispatch);
         return updatePromise;
       });
     });    // When a FINISH action is dispatched
