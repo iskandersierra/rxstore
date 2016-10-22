@@ -6,7 +6,7 @@ require("babel-core/register");
 require("babel-polyfill");
 import {
   Action, Dispatcher, Reducer, ActionCreator,
-  EmptyReducer, EmptyActionInstance, TypedReducer, TypedActionInstance,
+  EmptyReducer, EmptyActionDescription, TypedReducer, TypedActionDescription,
 } from "./interfaces";
 import { actionCreator } from "./actionCreator";
 
@@ -25,6 +25,8 @@ describe("actionCreator", () => {
       const dispatch = jest.fn();
       it("it should not be null",
         () => expect(action).toBeTruthy());
+      it("it should be a function",
+        () => expect(typeof action).toBe("function"));
       it("its kind should be empty",
         () => expect(action.kind).toBe("empty"));
       it("its type should be A_NAMESPACE::EMPTY_ACTION",
@@ -33,6 +35,8 @@ describe("actionCreator", () => {
         () => expect(typeof action.create).toBe("function"));
       it("its create should to return an action",
         () => expect(action.create()).toEqual({ type: "A_NAMESPACE::EMPTY_ACTION" }));
+      it("it should to return an action",
+        () => expect(action()).toEqual({ type: "A_NAMESPACE::EMPTY_ACTION" }));
       it("its dispatchOn should be a function",
         () => expect(typeof action.dispatchOn).toBe("function"));
       it("its dispatchOn should to return an action",
@@ -40,13 +44,15 @@ describe("actionCreator", () => {
           action.dispatchOn(dispatch);
           expect(dispatch).toBeCalledWith({ type: "A_NAMESPACE::EMPTY_ACTION" });
         });
-
     }); //    When an empty action is created
+
     describe("When a typed action is created", () => {
       const action = events.of<string>("TYPED_ACTION");
       const dispatch = jest.fn();
       it("it should not be null",
         () => expect(action).toBeTruthy());
+      it("it should be a function",
+        () => expect(typeof action).toBe("function"));
       it("its kind should be typed",
         () => expect(action.kind).toBe("typed"));
       it("its type should be A_NAMESPACE::TYPED_ACTION",
@@ -55,6 +61,8 @@ describe("actionCreator", () => {
         () => expect(typeof action.create).toBe("function"));
       it("its create should to return an action",
         () => expect(action.create("hello")).toEqual({ type: "A_NAMESPACE::TYPED_ACTION", payload: "hello" }));
+      it("it should to return an action",
+        () => expect(action("hello")).toEqual({ type: "A_NAMESPACE::TYPED_ACTION", payload: "hello" }));
       it("its dispatchOn should be a function",
         () => expect(typeof action.dispatchOn).toBe("function"));
       it("its dispatchOn should to return an action",
@@ -62,7 +70,6 @@ describe("actionCreator", () => {
           action.dispatchOn("hello", dispatch);
           expect(dispatch).toBeCalledWith({ type: "A_NAMESPACE::TYPED_ACTION", payload: "hello" });
         });
-
     }); //    When a typed action is created
   }); //    Given an action creator for a namespace
 }); //    actionCreator

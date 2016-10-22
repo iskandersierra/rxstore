@@ -1,10 +1,10 @@
 import "object-assign";
 import objectAssign = require("object-assign");
-import { ActionInstanceMapping, Store, StoreMiddleware } from "./interfaces";
+import { ActionDescriptionMapping, Store, StoreMiddleware } from "./interfaces";
 import { extendWith } from "./extendWith";
 
 export function extendWithActions<TState>(
-  actions: ActionInstanceMapping<TState>
+  actions: ActionDescriptionMapping<TState>
 ) {
   const extender = (store: Store<TState>) => {
     let mapping = {};

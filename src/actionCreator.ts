@@ -11,14 +11,18 @@ export function actionCreator<TState>(nameSpace: string): ActionCreator<TState> 
     const scopedName = nameSpace + type;
     const create = (): Action => ({ type: scopedName });
     const dispatchOn = (disp: Dispatcher) => disp(create());
-    return { kind: "empty", type: scopedName, create, dispatchOn, reducer };
+    const result: any = create;
+    objectAssign(result, { kind: "empty", type: scopedName, create, dispatchOn, reducer });
+    return result;
   };
   const of = <T>(type: string, reducer?: TypedReducer<TState, T>)
     : TypedActionDescription<TState, T> => {
     const scopedName = nameSpace + type;
     const create = (payload: T): Action => ({ type: scopedName, payload });
     const dispatchOn = (payload: T, disp: Dispatcher) => disp(create(payload));
-    return { kind: "typed", type: scopedName, create, dispatchOn, reducer };
+    const result: any = create;
+    objectAssign(result, { kind: "typed", type: scopedName, create, dispatchOn, reducer });
+    return result;
   };
 
   let result: any = untyped;

@@ -1,9 +1,9 @@
-import { Action, Dispatcher, Reducer, ActionInstanceMapping } from "./interfaces";
+import { Action, Dispatcher, Reducer, ActionDescriptionMapping } from "./interfaces";
 import "object-assign";
 import objectAssign = require("object-assign");
 
 export function reducerFromActions<TState>(
-  actions: ActionInstanceMapping<TState>
+  actions: ActionDescriptionMapping<TState>
 ): Reducer<TState> {
   let typeMapping: any = {};
   Object.keys(actions).forEach(key =>

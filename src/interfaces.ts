@@ -61,6 +61,7 @@ export type TypedReducer<TState, TPayload> =
 export interface EmptyActionDescription<TState> {
   kind: "empty";
   type: string;
+  () : Action;
   create: () => Action;
   dispatchOn: (dispatch: Dispatcher) => void;
   reducer: EmptyReducer<TState> | undefined;
@@ -69,6 +70,7 @@ export interface EmptyActionDescription<TState> {
 export interface TypedActionDescription<TState, TPayload> {
   kind: "typed";
   type: string;
+  (payload: TPayload) : Action;
   create: (payload: TPayload) => Action;
   dispatchOn: (payload: TPayload, dispatch: Dispatcher) => void;
   reducer: TypedReducer<TState, TPayload> | undefined;
@@ -80,7 +82,7 @@ export interface ActionCreator<TState> {
   of<T>(type: string, reducer?: TypedReducer<TState, T>): TypedActionDescription<TState, T>;
 }
 
-export interface ActionInstanceMapping<TState> {
+export interface ActionDescriptionMapping<TState> {
   [type: string]: EmptyActionDescription<TState> | TypedActionDescription<TState, any>;
 }
 

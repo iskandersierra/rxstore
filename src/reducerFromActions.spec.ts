@@ -6,7 +6,7 @@ require("babel-core/register");
 require("babel-polyfill");
 import {
   Action, Dispatcher, Reducer, ActionCreator,
-  EmptyReducer, EmptyActionInstance, TypedReducer, TypedActionInstance,
+  EmptyReducer, EmptyActionDescription, TypedReducer, TypedActionDescription,
 } from "./interfaces";
 import { reassign, reassignif } from "./utils";
 import { actionCreator } from "./actionCreator";
