@@ -82,3 +82,9 @@ export interface ActionCreator<TState> {
 export interface ActionInstanceMapping<TState> {
   [type: string]: EmptyActionDescription<TState> | TypedActionDescription<TState, any>;
 }
+
+export interface ICreateStoreOptions<TState> {
+  init?: TState;
+  middlewaresBefore?: StoreMiddleware<Store<TState>>[];
+  middlewaresAfter?: StoreMiddleware<Store<TState>>[];
+}

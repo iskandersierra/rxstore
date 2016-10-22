@@ -9,6 +9,7 @@ import "rxjs/add/observable/of";
 import "rxjs/add/observable/empty";
 import "rxjs/add/operator/delay";
 import "rxjs/add/operator/first";
+import "rxjs/add/operator/last";
 import "rxjs/add/operator/take";
 import "rxjs/add/operator/timeout";
 import "rxjs/add/operator/toArray";
@@ -17,56 +18,10 @@ import "rxjs/add/operator/toPromise";
 import {
   Action, StateUpdate,
 } from "./interfaces";
-import { createStore, createStoreExtensions } from "./createStore";
+import { createStore, STORE_ACTIONS } from "./createStore";
 import { extendWith } from "./extendWith";
 import { withEffects } from "./withEffects";
 import { tunnelActions } from "./tunnelActions";
-
-describe("createStoreExtensions", () => {
-  describe("Sanity checks", () => {
-    it("should be a function", () =>
-      expect(typeof createStoreExtensions).toBe("function"));
-    it("should return a function", () =>
-      expect(typeof createStoreExtensions({})).toBe("function"));
-  }); // describe Sanity checks
-
-  describe("Given an action map", () => {
-    const map = {
-      action1: { type: "ACTION1" },
-      action2: (c: number) => ({ type: "ACTION2", payload: c }),
-    };
-    const extender = createStoreExtensions(map);
-    describe("Given a simple store", () => {
-      const store = {
-        action$: Observable.empty<Action>(),
-        state$: Observable.empty<{}>(),
-        update$: Observable.empty<StateUpdate<{}>>(),
-        dispatch: jest.fn(),
-      };
-      describe("When the store is extended with map", () => {
-        const extended = extender(store);
-        it("it should not be null or undefined",
-          () => expect(extended).not.toBeFalsy());
-        it("it should not be the same object as store",
-          () => expect(extended).not.toBe(store));
-        it("extended.action1 should be a function",
-          () => expect(typeof extended.action1).toBe("function"));
-        it("extended.action2 should be a function",
-          () => expect(typeof extended.action2).toBe("function"));
-        describe("When action1 is called on extended", () => {
-          extended.action1();
-          it("it should have called store.dispatch with corresponding action",
-            () => expect(store.dispatch).toBeCalledWith(map.action1));
-        }); // describe When action1 is called on extended
-        describe("When action2 is called on extended", () => {
-          extended.action2(5);
-          it("it should have called store.dispatch with corresponding action",
-            () => expect(store.dispatch).toBeCalledWith(map.action2(5)));
-        }); // describe When action1 is called on extended
-      }); // describe When the store is extended with map
-    }); // describe Given a simple store
-  }); // describe Given an action map
-}); // describe createStoreExtensions
 
 describe("createStore", () => {
   describe("Sanity checks", () => {
@@ -127,5 +82,44 @@ describe("createStore", () => {
           action, state: { title: "hello world" },
         }])));
     }); // describe When an action is dispatched in the store
+
+    describe("When a FINISH action is dispatched", () => {
+      const reducer = jest.fn((s, a) => s);
+      const state = { title: "hello" };
+      const store = createStore(reducer, state);
+      const actionPromise = store.action$
+        .last().timeout(100)
+        .toPromise() as PromiseLike<any>;
+      it("the store's actions stream should be completed", () => {
+        store.dispatch({ type: STORE_ACTIONS.FINISH });
+        return actionPromise;
+      });
+    });    // When a FINISH action is dispatched
+
+    describe("When a FINISH action is dispatched", () => {
+      const reducer = jest.fn((s, a) => s);
+      const state = { title: "hello" };
+      const store = createStore(reducer, state);
+      const statePromise = store.state$
+        .last().timeout(100)
+        .toPromise() as PromiseLike<any>;
+      it("the store's states stream should be completed", () => {
+        store.dispatch({ type: STORE_ACTIONS.FINISH });
+        return statePromise;
+      });
+    });    // When a FINISH action is dispatched
+
+    describe("When a FINISH action is dispatched", () => {
+      const reducer = jest.fn((s, a) => s);
+      const state = { title: "hello" };
+      const store = createStore(reducer, state);
+      const updatePromise = store.update$
+        .last().timeout(100)
+        .toPromise() as PromiseLike<any>;
+      it("the store's updates stream should be completed", () => {
+        store.dispatch({ type: STORE_ACTIONS.FINISH });
+        return updatePromise;
+      });
+    });    // When a FINISH action is dispatched
   }); // describe Given a simple store
 }); // describe createStore

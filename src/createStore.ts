@@ -26,27 +26,6 @@ export const STORE_ACTIONS = {
 
 const scheduler = queue;
 
-export const createStoreExtensions =
-  (map: StoreActionsMap) =>
-    <TState>(store: Store<TState>) => {
-      const result: any = {};
-      for (const key in map) {
-        if (map.hasOwnProperty(key)) {
-          const action = map[key];
-          if (typeof action === "function") {
-            const func = (arg: any) =>
-              store.dispatch((action as ((payload: any) => Action))(arg));
-            result[key] = func;
-          } else {
-            const func = (arg: any) =>
-              store.dispatch(action as Action);
-            result[key] = func;
-          }
-        }
-      }
-      return result;
-    };
-
 export function applyMiddlewares<TState, TStore extends Store<TState>>(
   ...middlewares: StoreMiddleware<TStore>[]) {
     return (store: TStore) => middlewares.reduce((s, m) => m(s), store);

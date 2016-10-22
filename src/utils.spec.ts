@@ -59,6 +59,29 @@ describe("reassign", () => {
         });
     }); // describe When the single object is reassigned
   }); // describe Given a single object
+
+  describe("Given three object with no common props", () => {
+    const obj1 = { a1: "obj1.a1", a: "obj1.a" };
+    const obj2 = { a2: "obj2.a2", b: "obj2.b" };
+    const obj3 = { a3: "obj3.a3", c: "obj3.c" };
+    describe("When the three objects are reassigned", () => {
+      const r = reassign(obj1, obj2, obj3);
+      it("it should not be the original object",
+        () => expect(r).not.toBe(obj1));
+      it("it should be equal to both objects merged",
+        () => expect(r).toEqual({
+          a1: "obj1.a1", a: "obj1.a",
+          a2: "obj2.a2", b: "obj2.b",
+          a3: "obj3.a3", c: "obj3.c",
+        }));
+      it("the original objects should not change",
+        () => {
+          expect(obj1).toEqual({ a1: "obj1.a1", a: "obj1.a" });
+          expect(obj2).toEqual({ a2: "obj2.a2", b: "obj2.b" });
+          expect(obj3).toEqual({ a3: "obj3.a3", c: "obj3.c" });
+        });
+    }); // describe When the single object is reassigned
+  }); // describe Given a single object
 }); // describe reassign
 
 describe("reassignif", () => {
