@@ -6,8 +6,7 @@ require("babel-core/register");
 require("babel-polyfill");
 
 import { Action, StateUpdate } from "./interfaces";
-import { defineStore } from "./defineStore";
-import { StoreActions } from "./createStore";
+import { defineStore, StoreActions } from "./index";
 
 describe("defineStore", () => {
   describe("Sanity checks", () => {

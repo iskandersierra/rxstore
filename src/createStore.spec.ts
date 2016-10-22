@@ -35,7 +35,7 @@ describe("createStore", () => {
       const state = { title: "hello" };
       const store = createStore(reducer, state);
       const statePromise = store.state$
-        .take(1).first().timeout(100)
+        .take(1).first().timeout(300)
         .toPromise() as PromiseLike<{ title: string }>;
       it("it should not be null",
         () => expect(store).not.toBeFalsy());
@@ -59,13 +59,13 @@ describe("createStore", () => {
       const store = createStore(reducer, state);
       const action = { type: "CONCAT", payload: " world" };
       const statePromise = store.state$
-        .take(2).toArray().timeout(100)
+        .take(2).toArray().timeout(300)
         .toPromise() as PromiseLike<{ title: string }>;
       const actionPromise = store.action$
-        .take(1).toArray().timeout(100)
+        .take(1).toArray().timeout(300)
         .toPromise() as PromiseLike<Action>;
       const updatePromise = store.update$
-        .take(1).toArray().timeout(100)
+        .take(1).toArray().timeout(300)
         .toPromise() as PromiseLike<StateUpdate<{ title: string }>>;
       store.dispatch(action);
       it("reducer should have been called with action",
@@ -88,7 +88,7 @@ describe("createStore", () => {
       const state = { title: "hello" };
       const store = createStore(reducer, state);
       const actionPromise = store.action$
-        .last().timeout(100)
+        .last().timeout(300)
         .toPromise() as PromiseLike<any>;
       it("the store's actions stream should be completed", () => {
         StoreActions.finish.dispatchOn(store.dispatch);
@@ -101,7 +101,7 @@ describe("createStore", () => {
       const state = { title: "hello" };
       const store = createStore(reducer, state);
       const statePromise = store.state$
-        .last().timeout(100)
+        .last().timeout(300)
         .toPromise() as PromiseLike<any>;
       it("the store's states stream should be completed", () => {
         StoreActions.finish.dispatchOn(store.dispatch);
@@ -114,7 +114,7 @@ describe("createStore", () => {
       const state = { title: "hello" };
       const store = createStore(reducer, state);
       const updatePromise = store.update$
-        .last().timeout(100)
+        .last().timeout(300)
         .toPromise() as PromiseLike<any>;
       it("the store's updates stream should be completed", () => {
         StoreActions.finish.dispatchOn(store.dispatch);
@@ -127,7 +127,7 @@ describe("createStore", () => {
       const state = { title: "hello" };
       const store = createStore(reducer, state);
       const actionPromise = store.action$
-        .last().timeout(100)
+        .last().timeout(300)
         .toPromise() as PromiseLike<any>;
       it("the store's actions stream should be completed", () => {
         store.finish();
