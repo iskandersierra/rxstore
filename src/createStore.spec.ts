@@ -16,7 +16,8 @@ import "rxjs/add/operator/toArray";
 import "rxjs/add/operator/toPromise";
 
 import {
-  Action, StateUpdate, createStore, StoreActions,
+  Action, StateUpdate, createStore, StoreActions, startEffects, startEffectsOn,
+  defineStore, actionCreator, reducerFromActions, withEffects, Store, logUpdates,
 } from "./index";
 
 describe("createStore", () => {

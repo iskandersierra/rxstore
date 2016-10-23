@@ -7,7 +7,7 @@ require("babel-polyfill");
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/empty";
 import "rxjs/add/observable/of";
-import { Action, StateUpdate, createStore, withEffects } from "./index";
+import { Action, Store, StateUpdate, createStore, withEffects, withEffectsOn } from "./index";
 
 describe("withEffects", () => {
   describe("Sanity checks", () => {
@@ -24,7 +24,7 @@ describe("withEffects", () => {
     };
 
     describe("When the store is extended", () => {
-      const effects = jest.fn();
+      const effects = jest.fn((st: Store<{}>) => Observable.empty<Action>());
       const middleware = withEffects(effects);
       it("middleware should be a function", () =>
         expect(typeof middleware).toBe("function"));

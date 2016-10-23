@@ -19,5 +19,3 @@ export function extendWithActions<TState>(
   };
   return extendWith(extender);
 }
-
-export default extendWithActions;

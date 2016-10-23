@@ -1,10 +1,18 @@
-import { StoreMiddleware } from "./interfaces";
+import { Observable } from "rxjs/Observable";
+import { StoreMiddleware, Action, Store, Dispatcher } from "./interfaces";
+import { startEffectsOn } from "./startEffects";
 
-export const withEffects =
-  <TStore>(effects: (store: TStore) => void): StoreMiddleware<TStore> =>
+export const withEffectsOn =
+  <TStore extends Store<any>>(
+    getDispatch: (store: TStore) => (Dispatcher | Observable<Dispatcher>),
+    ...effects: ((store: TStore) => Observable<Action>)[]): StoreMiddleware<TStore> =>
     store => {
-      effects(store);
+      startEffectsOn
+        (getDispatch(store))
+        (...(effects.map(e => e(store))));
       return store;
     };
 
-export default withEffects;
+export const withEffects =
+  <TStore extends Store<any>>(...effects: ((store: TStore) => Observable<Action>)[]): StoreMiddleware<TStore> =>
+    withEffectsOn(s => s.dispatch, ...effects);

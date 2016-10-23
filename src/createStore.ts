@@ -3,10 +3,11 @@ import "rxjs/add/operator/do";
 import "rxjs/add/operator/first";
 import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/observeOn";
 import "rxjs/add/operator/publishReplay";
 import "rxjs/add/operator/scan";
 import "rxjs/add/operator/startWith";
-import "rxjs/add/operator/subscribeOn";
+// import "rxjs/add/operator/subscribeOn";
 import "rxjs/add/operator/switchMap";
 import "rxjs/add/operator/takeUntil";
 import { Subject } from "rxjs/Subject";
@@ -29,7 +30,7 @@ const scheduler = queue;
 
 export function applyMiddlewares<TState, TStore extends Store<TState>>(
   ...middlewares: StoreMiddleware<TStore>[]) {
-    return (store: TStore) => middlewares.reduce((s, m) => m(s), store);
+  return (store: TStore) => middlewares.reduce((s, m) => m(s), store);
 }
 
 export const createStore =
@@ -39,17 +40,26 @@ export const createStore =
     ...middlewares: StoreMiddleware<Store<TState>>[]
   ): TStore => {
     const actionSubject$ = new Subject<Action>();
-    const action$ = actionSubject$.asObservable().subscribeOn(scheduler);
+    const action$ = actionSubject$
+      .asObservable()
+      .observeOn(scheduler)
+      ;
+
     const connectableState$ = action$
       .scan((s, a) => reducer(s, a), initialState)
       .startWith(initialState)
       .publishReplay(1);
     connectableState$.connect();
-    const state$ = connectableState$ as Observable<TState>;
+
+    const state$ = connectableState$
+      .observeOn(scheduler)
+      ;
 
     const update$ = action$.switchMap(action =>
-      state$.first()
+      state$
+        .first()
         .map(state => ({ action, state } as StateUpdate<TState>)));
+
     const dispatch = (action: Action) => {
       actionSubject$.next(action);
       if (action.type === StoreActions.finish.type) {
@@ -62,5 +72,3 @@ export const createStore =
       (...middlewares, (s => { StoreActions.init.dispatchOn(s.dispatch); return s; }))
       ({ action$, state$, update$, dispatch, finish }) as TStore;
   };
-
-export default createStore;

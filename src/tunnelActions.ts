@@ -40,5 +40,3 @@ export const tunnelActions =
       }
       return store;
     };
-
-export default tunnelActions;

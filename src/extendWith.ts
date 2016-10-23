@@ -6,5 +6,3 @@ export const extendWith =
   <TState>(extender: (store: Store<TState>) => Object
   ): StoreMiddleware<Store<TState>> =>
     store => objectAssign(store, extender(store));
-
-export default extendWith;
