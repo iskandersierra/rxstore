@@ -9,9 +9,7 @@ import "rxjs/add/observable/empty";
 import "rxjs/add/observable/of";
 import "rxjs/add/operator/delay";
 import "rxjs/add/operator/toPromise";
-import { Action, StateUpdate } from "./interfaces";
-import { createStore } from "./createStore";
-import { tunnelActions } from "./tunnelActions";
+import { Action, StateUpdate, createStore, tunnelActions } from "./index";
 
 describe("tunnelActions", () => {
   describe("Sanity checks", () => {

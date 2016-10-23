@@ -1,6 +1,4 @@
 import { Action, Dispatcher, Reducer, ActionDescriptionMapping } from "./interfaces";
-import "object-assign";
-import objectAssign = require("object-assign");
 
 export function reducerFromActions<TState>(
   actions: ActionDescriptionMapping<TState>

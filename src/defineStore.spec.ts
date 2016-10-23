@@ -5,8 +5,7 @@ import "jest";
 require("babel-core/register");
 require("babel-polyfill");
 
-import { Action, StateUpdate } from "./interfaces";
-import { defineStore, StoreActions } from "./index";
+import { Action, StateUpdate, defineStore, StoreActions } from "./index";
 
 describe("defineStore", () => {
   describe("Sanity checks", () => {

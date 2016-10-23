@@ -13,20 +13,10 @@ export interface Reducer<TState> {
   (state: TState, action: Action): TState;
 }
 
-export interface ReducersMap<TState> {
-  [actionType: string]: Reducer<TState> | TState;
-}
-
 export interface StateUpdate<TState> {
   state: TState;
   action: Action;
 }
-
-export interface StoreActionsMap {
-  [actionKey: string]: Action | ((payload: any) => Action);
-}
-
-export type Effect = Observable<Action>;
 
 export interface Store<TState> {
   action$: Observable<Action>;
@@ -36,27 +26,15 @@ export interface Store<TState> {
   finish(): void;
 }
 
-export type ActionMap = (a: Action) => Action;
 export type ActionMapping = {
-  [name: string]: boolean | ActionMap;
+  [name: string]: boolean | ((a: Action) => Action);
 };
 export interface ActionTunnel {
   dispatch: Dispatcher | Observable<Dispatcher>;
-  actions: "all" | string[] | ActionMap | ActionMapping;
+  actions: "all" | string[] | ((a: Action) => Action) | ActionMapping;
 };
-export type StoreExtension<TState> =
-  (store: Store<TState>) => Object;
-
-export type EffectsFactory<TStore> =
-  (store: TStore) => void;
 
 export type StoreMiddleware<TStore> = (store: TStore) => TStore;
-
-export type EmptyReducer<TState> =
-  (state: TState) => TState;
-
-export type TypedReducer<TState, TPayload> =
-  (state: TState, payload: TPayload) => TState;
 
 export interface EmptyActionDescription<TState> {
   kind: "empty";
@@ -64,7 +42,7 @@ export interface EmptyActionDescription<TState> {
   () : Action;
   create: () => Action;
   dispatchOn: (dispatch: Dispatcher) => void;
-  reducer: EmptyReducer<TState> | undefined;
+  reducer?: (state: TState) => TState;
 }
 
 export interface TypedActionDescription<TState, TPayload> {
@@ -73,13 +51,13 @@ export interface TypedActionDescription<TState, TPayload> {
   (payload: TPayload) : Action;
   create: (payload: TPayload) => Action;
   dispatchOn: (payload: TPayload, dispatch: Dispatcher) => void;
-  reducer: TypedReducer<TState, TPayload> | undefined;
+  reducer?: (state: TState, payload: TPayload) => TState;
 }
 
 export interface ActionCreator<TState> {
-  (type: string, reducer?: EmptyReducer<TState>): EmptyActionDescription<TState>;
+  (type: string, reducer?: (state: TState) => TState): EmptyActionDescription<TState>;
 
-  of<T>(type: string, reducer?: TypedReducer<TState, T>): TypedActionDescription<TState, T>;
+  of<T>(type: string, reducer?: (state: TState, payload: T) => TState): TypedActionDescription<TState, T>;
 }
 
 export interface ActionDescriptionMapping<TState> {

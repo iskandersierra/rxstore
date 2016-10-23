@@ -6,11 +6,9 @@ require("babel-core/register");
 require("babel-polyfill");
 import {
   Action, Dispatcher, Reducer, ActionCreator,
-  EmptyReducer, EmptyActionDescription, TypedReducer, TypedActionDescription,
-} from "./interfaces";
-import { reassign, reassignif } from "./utils";
-import { actionCreator } from "./actionCreator";
-import { reducerFromActions } from "./reducerFromActions";
+  EmptyActionDescription, TypedActionDescription,
+  reassign, reassignif, actionCreator, reducerFromActions,
+} from "./index";
 
 interface TestModel {
   value: string;

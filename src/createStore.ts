@@ -13,7 +13,7 @@ import { Subject } from "rxjs/Subject";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { queue } from "rxjs/scheduler/queue";
 import {
-  Store, Action, Reducer, StateUpdate, StoreActionsMap,
+  Store, Action, Reducer, StateUpdate,
   Dispatcher, StoreMiddleware, EmptyActionDescription,
 } from "./interfaces";
 import { actionCreator } from "./actionCreator";

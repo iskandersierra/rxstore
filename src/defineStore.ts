@@ -3,8 +3,6 @@ import {
 } from "./interfaces";
 import { reassign } from "./utils";
 import { createStore } from "./createStore";
-import "object-assign";
-import objectAssign = require("object-assign");
 
 interface IInternalCreateStoreOptions<TState> {
   init: TState;

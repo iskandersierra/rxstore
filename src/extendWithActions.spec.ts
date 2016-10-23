@@ -7,11 +7,11 @@ require("babel-polyfill");
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/empty";
 import "rxjs/add/observable/of";
-import { reassign, reassignif } from "./utils";
-import { actionCreator } from "./actionCreator";
-import { Action, StateUpdate, Store } from "./interfaces";
-import { createStore, createStoreExtensions } from "./createStore";
-import { extendWithActions } from "./extendWithActions";
+import {
+  reassign, reassignif, actionCreator,
+  Action, StateUpdate, Store,
+  createStore, extendWithActions,
+} from "./index";
 
 interface TestModel {
   value: string;
@@ -43,6 +43,7 @@ describe("extendWithActions", () => {
       state$: Observable.empty<{}>(),
       update$: Observable.empty<StateUpdate<{}>>(),
       dispatch: jest.fn(),
+      finish: jest.fn(),
     };
 
     describe("When the store is extended", () => {

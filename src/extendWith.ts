@@ -1,9 +1,9 @@
 import "object-assign";
 import objectAssign = require("object-assign");
-import { StoreExtension, Store, StoreMiddleware } from "./interfaces";
+import { Store, StoreMiddleware } from "./interfaces";
 
 export const extendWith =
-  <TState>(extender: StoreExtension<TState>
+  <TState>(extender: (store: Store<TState>) => Object
   ): StoreMiddleware<Store<TState>> =>
     store => objectAssign(store, extender(store));
 

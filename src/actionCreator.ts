@@ -1,12 +1,12 @@
 import {
   Action, Dispatcher, Reducer, ActionCreator,
-  EmptyReducer, EmptyActionDescription, TypedReducer, TypedActionDescription,
+  EmptyActionDescription, TypedActionDescription,
 } from "./interfaces";
 import "object-assign";
 import objectAssign = require("object-assign");
 
 export function actionCreator<TState>(nameSpace: string): ActionCreator<TState> {
-  const untyped = (type: string, reducer?: EmptyReducer<TState>)
+  const untyped = (type: string, reducer?: (state: TState) => TState)
     : EmptyActionDescription<TState> => {
     const scopedName = nameSpace + type;
     const create = (): Action => ({ type: scopedName });
@@ -15,7 +15,7 @@ export function actionCreator<TState>(nameSpace: string): ActionCreator<TState> 
     objectAssign(result, { kind: "empty", type: scopedName, create, dispatchOn, reducer });
     return result;
   };
-  const of = <T>(type: string, reducer?: TypedReducer<TState, T>)
+  const of = <T>(type: string, reducer?: (state: TState, payload: T) => TState)
     : TypedActionDescription<TState, T> => {
     const scopedName = nameSpace + type;
     const create = (payload: T): Action => ({ type: scopedName, payload });

@@ -2,8 +2,6 @@ export * from "./interfaces";
 
 export * from "./createStore";
 export * from "./defineStore";
-export * from "./createReducerFromMap";
-export * from "./createEffects";
 export * from "./actionCreator";
 export * from "./reducerFromActions";
 

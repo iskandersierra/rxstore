@@ -1,7 +1,7 @@
-import { EffectsFactory, StoreMiddleware } from "./interfaces";
+import { StoreMiddleware } from "./interfaces";
 
 export const withEffects =
-  <TStore>(effects: EffectsFactory<TStore>): StoreMiddleware<TStore> =>
+  <TStore>(effects: (store: TStore) => void): StoreMiddleware<TStore> =>
     store => {
       effects(store);
       return store;

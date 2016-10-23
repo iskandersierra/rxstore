@@ -16,12 +16,8 @@ import "rxjs/add/operator/toArray";
 import "rxjs/add/operator/toPromise";
 
 import {
-  Action, StateUpdate,
-} from "./interfaces";
-import { createStore, StoreActions } from "./createStore";
-import { extendWith } from "./extendWith";
-import { withEffects } from "./withEffects";
-import { tunnelActions } from "./tunnelActions";
+  Action, StateUpdate, createStore, StoreActions,
+} from "./index";
 
 describe("createStore", () => {
   describe("Sanity checks", () => {

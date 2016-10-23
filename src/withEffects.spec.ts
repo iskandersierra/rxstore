@@ -7,9 +7,7 @@ require("babel-polyfill");
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/observable/empty";
 import "rxjs/add/observable/of";
-import { Action, StateUpdate } from "./interfaces";
-import { createStore, createStoreExtensions } from "./createStore";
-import { withEffects } from "./withEffects";
+import { Action, StateUpdate, createStore, withEffects } from "./index";
 
 describe("withEffects", () => {
   describe("Sanity checks", () => {

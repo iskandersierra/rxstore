@@ -1,6 +1,6 @@
 {
   "name": "rxstore",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Redux-like store implemented with RxJS",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",

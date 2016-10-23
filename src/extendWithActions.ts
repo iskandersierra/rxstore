@@ -1,5 +1,3 @@
-import "object-assign";
-import objectAssign = require("object-assign");
 import { ActionDescriptionMapping, Store, StoreMiddleware } from "./interfaces";
 import { extendWith } from "./extendWith";
 

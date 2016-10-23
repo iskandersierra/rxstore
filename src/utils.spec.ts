@@ -4,7 +4,7 @@
 import "jest";
 require("babel-core/register");
 require("babel-polyfill");
-import { reassign, reassignif } from "./utils";
+import { reassign, reassignif } from "./index";
 
 describe("reassign", () => {
   describe("Given a single object and a true condition", () => {
