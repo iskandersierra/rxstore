@@ -5,4 +5,5 @@ import { Store, StoreMiddleware } from "./interfaces";
 export const extendWith =
   <TState>(extender: (store: Store<TState>) => Object
   ): StoreMiddleware<Store<TState>> =>
-    store => objectAssign(store, extender(store));
+    store =>
+      objectAssign(store, extender(store)) as Store<TState>;

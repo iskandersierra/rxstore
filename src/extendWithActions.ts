@@ -3,7 +3,7 @@ import { extendWith } from "./extendWith";
 
 export function extendWithActions<TState>(
   actions: ActionDescriptionMapping<TState>
-) {
+): StoreMiddleware<Store<TState>> {
   const extender = (store: Store<TState>) => {
     let mapping = {};
     Object.keys(actions)
