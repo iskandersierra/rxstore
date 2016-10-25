@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/iskandersierra/rxstore/compare/v1.1.0...v1.4.0) (2016-10-25)
+
+
+### Bug Fixes
+
+* **actionCreator:** Renamed ActionInstance for ActionDescription ([601bbac](https://github.com/iskandersierra/rxstore/commit/601bbac))
+* **author:** Updated author on package.json ([fcf4a15](https://github.com/iskandersierra/rxstore/commit/fcf4a15))
+* **createEffects:** Removed, use extendWith instead ([8b734b1](https://github.com/iskandersierra/rxstore/commit/8b734b1))
+* **createStore:** Dispatch INIT on store creation ([9d76fd1](https://github.com/iskandersierra/rxstore/commit/9d76fd1))
+* **defineStore:** Was not included in index.ts ([53b0f44](https://github.com/iskandersierra/rxstore/commit/53b0f44))
+* **extendWithActions:** Had the wrong result type ([c15bf92](https://github.com/iskandersierra/rxstore/commit/c15bf92))
+* **interface:** Removed all default exports ([0fd8d42](https://github.com/iskandersierra/rxstore/commit/0fd8d42))
+* **logEffects:** Removed log effects helpers ([d55cec9](https://github.com/iskandersierra/rxstore/commit/d55cec9))
+* **startEffects:** Was trying to dispatch out of queue ([19022e2](https://github.com/iskandersierra/rxstore/commit/19022e2))
+* **Store:** Added finish method to send a FINISH action ([1d59e54](https://github.com/iskandersierra/rxstore/commit/1d59e54))
+* **tslint:** Fix some ts styling ([97e33d3](https://github.com/iskandersierra/rxstore/commit/97e33d3))
+
+
+### Features
+
+* **actionCreator:** actions are now also functions for creating instances ([05e5456](https://github.com/iskandersierra/rxstore/commit/05e5456))
+* **createStore:** Added func applyMiddlewares ([8e78e5b](https://github.com/iskandersierra/rxstore/commit/8e78e5b))
+* **defineStore:** Added to make easier store creation ([b41c361](https://github.com/iskandersierra/rxstore/commit/b41c361))
+* **tunnelActions:** Now can receive a dispatch stream instead of just a dispatch ([8be6dde](https://github.com/iskandersierra/rxstore/commit/8be6dde))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/iskandersierra/rxstore/compare/v1.0.0...v1.1.0) (2016-10-20)
 
