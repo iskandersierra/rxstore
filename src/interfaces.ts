@@ -30,7 +30,8 @@ export type ActionMapping = {
   [name: string]: boolean | ((a: Action) => Action);
 };
 export interface ActionTunnel {
-  dispatch: Dispatcher | Observable<Dispatcher>;
+  dispatch?: Dispatcher | Observable<Dispatcher>;
+  dispatchFactory?: (store: Store<any>) => Dispatcher | Observable<Dispatcher>;
   actions: "all" | string[] | ((a: Action) => Action) | ActionMapping;
 };
 
@@ -39,7 +40,7 @@ export type StoreMiddleware<TStore> = (store: TStore) => TStore;
 export interface EmptyActionDescription<TState> {
   kind: "empty";
   type: string;
-  () : Action;
+  (): Action;
   create: () => Action;
   dispatchOn: (dispatch: Dispatcher) => void;
   reducer?: (state: TState) => TState;
@@ -48,7 +49,7 @@ export interface EmptyActionDescription<TState> {
 export interface TypedActionDescription<TState, TPayload> {
   kind: "typed";
   type: string;
-  (payload: TPayload) : Action;
+  (payload: TPayload): Action;
   create: (payload: TPayload) => Action;
   dispatchOn: (payload: TPayload, dispatch: Dispatcher) => void;
   reducer?: (state: TState, payload: TPayload) => TState;

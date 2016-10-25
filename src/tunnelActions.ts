@@ -10,13 +10,23 @@ import {
 export const tunnelActions =
   (tunnel: ActionTunnel): StoreMiddleware<Store<any>> =>
     store => {
-      const { dispatch: disp, actions } = tunnel;
-      const dispatch$ = typeof disp === "function" ? Observable.of(disp) : disp;
+      const { dispatch, dispatchFactory, actions } = tunnel;
+      const toDispatchStream = (disp: Dispatcher | Observable<Dispatcher>) =>
+        typeof disp === "function" ? Observable.of(disp) : disp;
+
+      if (!!dispatch && !!dispatchFactory) {
+        throw Error("Must supply dispatch or dispatchFactory");
+      }
+      const dispatch$ =
+        !!dispatch
+          ? toDispatchStream(dispatch)
+          : toDispatchStream(dispatchFactory!(store));
+
       const subscribe = (a$: Observable<Action>) => a$
-          .withLatestFrom(dispatch$, (a, d) => [a, d])
-          .filter<[Action, Dispatcher]>(([a, d]) => !!d)
-          .do<[Action, Dispatcher]>(([a, d]) => d(a))
-          .subscribe();
+        .withLatestFrom(dispatch$, (a, d) => [a, d])
+        .filter<[Action, Dispatcher]>(([a, d]) => !!d)
+        .do<[Action, Dispatcher]>(([a, d]) => d(a))
+        .subscribe();
 
       if (actions === "all") {
         subscribe(store.action$);

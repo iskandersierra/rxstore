@@ -9,7 +9,7 @@ import "rxjs/add/observable/empty";
 import "rxjs/add/observable/of";
 import "rxjs/add/operator/delay";
 import "rxjs/add/operator/toPromise";
-import { Action, StateUpdate, createStore, tunnelActions } from "./index";
+import { Action, StateUpdate, createStore, tunnelActions, Store } from "./index";
 
 describe("tunnelActions", () => {
   describe("Sanity checks", () => {
@@ -116,6 +116,48 @@ describe("tunnelActions", () => {
     const store = createStore(reducer, state, tunnelActions({
       actions: "all",
       dispatch: Observable.of(dispatch),
+    }));
+    it("it should call the given tunnel dispatch",
+      () => {
+        store.dispatch({ type: "TEST1" });
+        store.dispatch({ type: "TEST2" });
+        store.dispatch({ type: "TEST3" });
+        const promise = Observable.of(1).delay(40)
+          .toPromise() as PromiseLike<any>;
+        return promise.then(() => {
+          expect(dispatch).toHaveBeenCalledTimes(1 + 3);
+        });
+      });
+  }); // describe When an action is dispatched in the store
+
+  describe("When a store is created with tunnel with a dispatch factory", () => {
+    const reducer = jest.fn();
+    const state = { title: "hello" };
+    const dispatch = jest.fn();
+    const store = createStore(reducer, state, tunnelActions({
+      actions: "all",
+      dispatchFactory: (s: Store<any>) => dispatch,
+    }));
+    it("it should call the given tunnel dispatch",
+      () => {
+        store.dispatch({ type: "TEST1" });
+        store.dispatch({ type: "TEST2" });
+        store.dispatch({ type: "TEST3" });
+        const promise = Observable.of(1).delay(40)
+          .toPromise() as PromiseLike<any>;
+        return promise.then(() => {
+          expect(dispatch).toHaveBeenCalledTimes(1 + 3);
+        });
+      });
+  }); // describe When an action is dispatched in the store
+
+  describe("When a store is created with tunnel with a dispatch stream factory", () => {
+    const reducer = jest.fn();
+    const state = { title: "hello" };
+    const dispatch = jest.fn();
+    const store = createStore(reducer, state, tunnelActions({
+      actions: "all",
+      dispatchFactory: (s: Store<any>) => Observable.of(dispatch),
     }));
     it("it should call the given tunnel dispatch",
       () => {
