@@ -11,8 +11,6 @@ import "rxjs/add/operator/startWith";
 import "rxjs/add/operator/withLatestFrom";
 import "rxjs/add/operator/switchMap";
 import "rxjs/add/operator/takeUntil";
-import { Subject } from "rxjs/Subject";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { queue } from "rxjs/scheduler/queue";
 import {
   Store, Action, Reducer, StateUpdate,
@@ -30,9 +28,9 @@ export const startEffectsOn =
       effects.forEach(effect => {
         effect
           .observeOn(scheduler)
-          .withLatestFrom(dispatch$.observeOn(scheduler), (a, d) => [a, d] as ([Action, Dispatcher]))
-          .do<[Action, Dispatcher]>(([a, d]) => d(a))
-          .subscribe();
+          .withLatestFrom(dispatch$/*.observeOn(scheduler)*/, (a, d) => [a, d] as ([Action, Dispatcher]))
+          // .do<[Action, Dispatcher]>(([a, d]) => d(a))
+          .subscribe(([a, d]) => d(a));
       });
     };
 
