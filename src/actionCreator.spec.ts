@@ -44,6 +44,12 @@ describe("actionCreator", () => {
           action.dispatchOn(dispatch);
           expect(dispatch).toBeCalledWith({ type: "A_NAMESPACE::EMPTY_ACTION" });
         });
+      it("its isA should be a function",
+        () => expect(typeof action.isA).toBe("function"));
+      it("its isA should to return true for a corresponding action",
+        () => expect(action.isA({ type: "A_NAMESPACE::EMPTY_ACTION" })).toBeTruthy());
+      it("its isA should to return false for a non-corresponding action",
+        () => expect(action.isA({ type: "A_NAMESPACE::OTHER_ACTION" })).toBeFalsy());
     }); //    When an empty action is created
 
     describe("When a typed action is created", () => {
@@ -70,6 +76,12 @@ describe("actionCreator", () => {
           action.dispatchOn("hello", dispatch);
           expect(dispatch).toBeCalledWith({ type: "A_NAMESPACE::TYPED_ACTION", payload: "hello" });
         });
+      it("its isA should be a function",
+        () => expect(typeof action.isA).toBe("function"));
+      it("its isA should to return true for a corresponding action",
+        () => expect(action.isA({ type: "A_NAMESPACE::TYPED_ACTION" })).toBeTruthy());
+      it("its isA should to return false for a non-corresponding action",
+        () => expect(action.isA({ type: "A_NAMESPACE::OTHER_ACTION" })).toBeFalsy());
     }); //    When a typed action is created
   }); //    Given an action creator for a namespace
 }); //    actionCreator

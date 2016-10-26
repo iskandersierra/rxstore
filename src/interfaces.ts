@@ -37,18 +37,21 @@ export interface ActionTunnel {
 
 export type StoreMiddleware<TStore> = (store: TStore) => TStore;
 
-export interface EmptyActionDescription<TState> {
-  kind: "empty";
+export interface ActionDescription {
   type: string;
+  isA: (a: Action) => boolean;
+}
+
+export interface EmptyActionDescription<TState> extends ActionDescription {
+  kind: "empty";
   (): Action;
   create: () => Action;
   dispatchOn: (dispatch: Dispatcher) => void;
   reducer?: (state: TState) => TState;
 }
 
-export interface TypedActionDescription<TState, TPayload> {
+export interface TypedActionDescription<TState, TPayload> extends ActionDescription {
   kind: "typed";
-  type: string;
   (payload: TPayload): Action;
   create: (payload: TPayload) => Action;
   dispatchOn: (payload: TPayload, dispatch: Dispatcher) => void;
