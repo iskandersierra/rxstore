@@ -49,9 +49,9 @@ export const logUpdates =
         ? mapper
         : (update: StateUpdate<TState>) => update;
 
-      const asMessage = (title: string, caption: string) => !!title
-        ? (!!caption ? title + " " + caption : caption) + ": "
-        : !!caption ? caption + ": " : "";
+      const asMessage = (ttl: string, cap: string) => !!ttl
+        ? (!!cap ? ttl + " " + cap : cap) + ": "
+        : !!cap ? cap + ": " : "";
 
       const onNext = (up: StateUpdate<TState>) =>
         logger(asMessage(theTitle(), theCaption(up, store)), theMapper(up, store));
