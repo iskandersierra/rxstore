@@ -30,7 +30,7 @@ describe("logUpdates", () => {
     const logger = jest.fn();
     it("the logger should receive default ", () => {
       const store = createStore((s, a) => a.type, "", logUpdates({ logger }));
-      expect(logger).toBeCalledWith("UPDATE: ", { action: StoreActions.init(), state: StoreActions.init.type });
+      expect(logger).toBeCalledWith("[UPDATE]: ", { action: StoreActions.init(), state: StoreActions.init.type });
     });
   });    // Given a logger
 
@@ -39,7 +39,7 @@ describe("logUpdates", () => {
     const caption = "CAPTION";
     it("the logger should receive default ", () => {
       const store = createStore((s, a) => a.type, "", logUpdates({ logger, caption }));
-      expect(logger).toBeCalledWith(caption, { action: StoreActions.init(), state: StoreActions.init.type });
+      expect(logger).toBeCalledWith(caption + ": ", { action: StoreActions.init(), state: StoreActions.init.type });
     });
   });    // Given a logger and a caption
 
@@ -47,7 +47,7 @@ describe("logUpdates", () => {
     const logger = jest.fn();
     it("the logger should receive default ", () => {
       const store = createStore((s, a) => a.type, "", logUpdates({ logger, caption: up => up.action.type }));
-      expect(logger).toBeCalledWith(StoreActions.init.type,
+      expect(logger).toBeCalledWith(StoreActions.init.type + ": ",
         { action: StoreActions.init(), state: StoreActions.init.type });
     });
   });    // Given a logger and a caption function
@@ -56,7 +56,7 @@ describe("logUpdates", () => {
     const logger = jest.fn();
     it("the logger should receive default ", () => {
       const store = createStore((s, a) => a.type, "", logUpdates({ logger, mapper: up => up.action.type }));
-      expect(logger).toBeCalledWith("UPDATE: ", StoreActions.init.type);
+      expect(logger).toBeCalledWith("[UPDATE]: ", StoreActions.init.type);
     });
   });    // Given a logger and a caption function
 });    // logUpdates/logUpdatesOn
